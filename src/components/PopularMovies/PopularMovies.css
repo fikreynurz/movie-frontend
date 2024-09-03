@@ -1,0 +1,15 @@
+.card-content {
+    text-align: center;
+    padding: 16px;
+  }
+  
+  .card-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  .card-date {
+    color: #777;
+  }
+  
