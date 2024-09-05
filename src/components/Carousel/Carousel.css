@@ -1,0 +1,37 @@
+.carousel-container {
+    position: relative;
+    color: white;
+  }
+  
+  .carousel-image {
+    filter: brightness(0.7);
+  }
+  
+  .poster-container {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+  }
+  
+  .poster-image {
+    width: 100px;
+    height: 150px;
+  }
+  
+  .carousel-details {
+    position: absolute;
+    bottom: 20px;
+    left: 150px;
+  }
+  
+  .icons {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .icon-text {
+    display: flex;
+    align-items: center;
+  }
+  

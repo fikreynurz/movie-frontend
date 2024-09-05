@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 import { Box, Typography } from '@mui/material';
-import './PopularCarousel.css';
+import './Carousel.css';
 
 const PopularCarousel = () => {
   const [movies, setMovies] = useState([]);

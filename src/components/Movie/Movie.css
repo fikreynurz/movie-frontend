@@ -1,0 +1,39 @@
+.card-content {
+    text-align: center;
+    padding: 16px;
+  }
+  
+  .card-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  .card-date {
+    color: #777;
+  }
+  
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Atur ukuran kolom grid */
+  gap: 20px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.grid-item {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsivitas Layout */
+@media only screen and (max-width: 768px) {
+  .carousel-container {
+    max-width: 100%;
+    padding: 0 20px;
+  }
+
+  .grid-container {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}

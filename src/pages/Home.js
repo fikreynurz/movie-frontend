@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Box } from '@mui/material';
-import PopularMovies from '../components/PopularMovies/PopularMovies';
-import PopularCarousel from '../components/PopularCarousel/PopularCarousel';
+import Movie from '../components/Movie/Movie';
+import Carousel from '../components/Carousel/Carousel';
 import Header from '../components/Header/Header';
 
 const Home = () => {
@@ -10,10 +10,10 @@ const Home = () => {
       <Header />
       <Container maxWidth="lg">
         <Box my={4}>
-          <PopularCarousel />
+          <Carousel />
         </Box>
         <Box my={4}>
-          <PopularMovies />
+          <Movie />
         </Box>
       </Container>
     </>
@@ -21,4 +21,3 @@ const Home = () => {
 };
 
 export default Home;
-    

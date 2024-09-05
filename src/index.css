@@ -11,3 +11,40 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Pastikan semua elemen menggunakan box-sizing yang benar */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* Hilangkan scroll horizontal */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 1280px; /* Batasi lebar maksimal */
+  margin: 0 auto; /* Tengah secara horizontal */
+  padding: 20px;
+}
+
+/* Atur semua elemen agar sesuai dengan viewport */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Mencegah elemen meluap dari layar */
+.carousel-image, .grid-item {
+  max-width: 100%;
+  height: auto;
+}
