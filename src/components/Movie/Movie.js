@@ -9,12 +9,10 @@ const Movie = ({ category }) => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        console.log(`Fetching ${category} movies...`);
         const endpoint = category === "popular" 
           ? `https://api.themoviedb.org/3/movie/popular?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&page=1`
           : `https://api.themoviedb.org/3/movie/now_playing?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&page=1`;
         const response = await axios.get(endpoint);
-        console.log(`${category} movies fetched:`, response.data.results);
         setMovies(response.data.results);
       } catch (error) {
         console.error(`Error fetching ${category} movies:`, error);
@@ -31,7 +29,22 @@ const Movie = ({ category }) => {
     <Grid container spacing={4}>
       {movies.slice(0, 10).map((movie) => (
         <Grid item xs={12} sm={6} md={4} lg={2} key={movie.id}>
-          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#1c1c1c', color: '#fff', borderRadius: '8px', boxShadow: 3 }}>
+          <Card
+            sx={{
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              backgroundColor: '#1c1c1c',
+              color: '#fff',
+              borderRadius: '8px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+              transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+              '&:hover': {
+                transform: 'scale(1.05)',
+                boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+              },
+            }}
+          >
             <CardMedia
               component="img"
               image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -52,7 +65,16 @@ const Movie = ({ category }) => {
               component={Link}
               to={`/movie/${movie.id}`}
               onClick={() => console.log(`Navigating to /movie/${movie.id}`)}
-              sx={{ width: '100%', marginTop: 'auto' }}
+              sx={{
+                width: '100%',
+                marginTop: 'auto',
+                backgroundColor: '#1976d2',
+                transition: 'background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+                '&:hover': {
+                  backgroundColor: '#2196f3',
+                  boxShadow: '0px 4px 15px rgba(0, 123, 255, 0.6)',
+                },
+              }}
             >
               View Details
             </Button>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, IconButton, Avatar } from '@mui/material';
 import { Link } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu';
+import logo from '../../assets/images/logo.png'; // Pastikan path ini sesuai dengan folder Anda
+import FilterModal from '../FilterModal'; // Import modal filter
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -10,10 +11,9 @@ const Header = () => {
   const [profilePic, setProfilePic] = useState(''); // Link ke foto profil
 
   const handleLogin = () => {
-    // Proses login
     setIsLoggedIn(true);
-    setRole('admin'); // Ganti ini sesuai role yang diambil dari backend atau API login
-    setProfilePic('https://via.placeholder.com/150'); // Ganti dengan foto profil yang benar
+    setRole('admin'); // Ganti sesuai dengan role dari backend
+    setProfilePic('https://via.placeholder.com/150'); // Ganti dengan URL foto profil yang sebenarnya
   };
 
   const handleLogout = () => {
@@ -32,11 +32,11 @@ const Header = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="sticky" sx={{ zIndex: 1100 }}>  {/* Menggunakan position sticky */}
       <Toolbar>
         {/* Logo dan judul JAKRIE */}
         <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-          <img src="../assets/images/logo.png" alt="Logo" style={{ width: '40px', height: '40px' }} />
+          <img src={logo} alt="Logo" style={{ width: '40px', height: '40px' }} />
         </IconButton>
         <Typography
           variant="h6"
@@ -46,6 +46,9 @@ const Header = () => {
         >
           JAKRIE
         </Typography>
+
+        {/* Tombol Filter di sebelah kiri tombol Login */}
+        <FilterModal />  {/* Modal Filter yang bisa di-trigger dari Header */}
 
         {/* Login atau Profile setelah login */}
         {isLoggedIn ? (

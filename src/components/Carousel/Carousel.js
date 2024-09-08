@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Carousel from 'react-bootstrap/Carousel';  // Menggunakan Carousel dari React Bootstrap
-import { Container, Typography } from '@mui/material';
+import { Container} from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const RecentCarousel = () => {
@@ -21,9 +21,6 @@ const RecentCarousel = () => {
 
   return (
     <Container>
-      <Typography variant="h4" component="h2" gutterBottom>
-        Recent Movies
-      </Typography>
       <Carousel>
         {movies.slice(0, 5).map((movie) => (
           <Carousel.Item key={movie.id}>
