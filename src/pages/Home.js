@@ -5,8 +5,11 @@ import RecentCarousel from '../components/Carousel/Carousel';
 import Search from '../components/Search/Search';
 import FilterModal from '../components/FilterModal';
 import axios from 'axios';
+import recentMovies from '../components/RecentMovie/RecentMovie';
 
 const Home = () => {
+  const [popularMovies, setPopularMovies] = useState([]);
+  const [recentMovies, setRecentMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [filterParams, setFilterParams] = useState({ year: '', rating: '', genres: [] });
 
@@ -41,6 +44,34 @@ const Home = () => {
     fetchFilteredMovies();
   }, [filterParams]);
 
+  // Fetch Popular and Recent movies
+  useEffect(() => {
+    const fetchPopularMovies = async () => {
+      try {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/movie/popular?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&page=1`
+        );
+        setPopularMovies(response.data.results);
+      } catch (error) {
+        console.error("Error fetching popular movies:", error);
+      }
+    };
+
+    const fetchRecentMovies = async () => {
+      try {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/movie/now_playing?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&page=1`
+        );
+        setRecentMovies(response.data.results);
+      } catch (error) {
+        console.error("Error fetching recent movies:", error);
+      }
+    };
+
+    fetchPopularMovies();
+    fetchRecentMovies();
+  }, []);
+
   return (
     <>
       <Container maxWidth="lg">
@@ -69,13 +100,13 @@ const Home = () => {
               <Typography variant="h4" component="h2" gutterBottom>
                 Popular Movies
               </Typography>
-              <Movie category="popular" />
+              <Movie movies={popularMovies} />  {/* Tampilkan Popular Movies */}
             </Box>
             <Box my={4}>
               <Typography variant="h4" component="h2" gutterBottom>
                 Recent Movies
               </Typography>
-              <Movie category="recent" />
+              <Movie movies={recentMovies} />  {/* Tampilkan Recent Movies */}
             </Box>
           </>
         )}
