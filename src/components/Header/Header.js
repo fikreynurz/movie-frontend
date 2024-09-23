@@ -36,6 +36,7 @@ const Header = () => {
     setAnchorEl(null);
     setRole('');
     setProfilePic('');
+    navigate('/')
   };
 
   const handleMenu = (event) => {

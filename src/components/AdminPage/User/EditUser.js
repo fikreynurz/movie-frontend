@@ -78,7 +78,7 @@ const EditUser = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     if (modalMessage === "User has been updated successfully!") {
-      navigate("/admin/user");
+      navigate("/admin/userlist");
     }
   };
 
@@ -91,7 +91,6 @@ const EditUser = () => {
 
   return (
     <>
-      <ResponsiveAppBar adminName={adminName} onLogout={handleLogout} />
       <ThemeProvider theme={theme}>
         <CssBaseline/>
         <AdminSidebar/>

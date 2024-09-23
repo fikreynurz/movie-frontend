@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Grid, Card, CardMedia, CardContent, Avatar, Box, Button, Divider } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Jika Anda menggunakan backend untuk mengambil data favorit dan ulasan
 
 const Profile = () => {
+  const userLoggedIn = localStorage.getItem("user")
+  const userParsed = JSON.parse(userLoggedIn)
+  const userName = userParsed.name
   const [favorites, setFavorites] = useState([]);  // State untuk daftar film favorit
   const [reviews, setReviews] = useState([]);  // State untuk ulasan pengguna
-  const [user, setUser] = useState({ name: 'John Doe', profilePic: 'https://via.placeholder.com/150' });  // Mock data pengguna
+  const [user, setUser] = useState({ name: userName.toUpperCase(), profilePic: 'https://via.placeholder.com/150' });  // Mock data pengguna
+  const navigate = useNavigate()
 
   // Fungsi ini akan fetch data dari API (sesuaikan dengan backend Anda)
   useEffect(() => {
+    if (!userLoggedIn) {
+      navigate('/')
+    }
     const fetchUserData = async () => {
       try {
         // Ganti dengan API Anda untuk mendapatkan data favorit dan ulasan pengguna

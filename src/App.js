@@ -9,6 +9,9 @@ import FilterResults from './pages/FilterResults';
 import Profile from './pages/Profile';
 import Login from './components/Login/Login'
 import Register from './components/Register/Register'
+import UserListAdmin from './components/AdminPage/User/UserList'
+import UserAddAdmin from './components/AdminPage/User/AddUser'
+import UserEditAdmin from './components/AdminPage/User/EditUser'
 
 
 function App() {
@@ -24,6 +27,9 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/admin/userlist" element={<UserListAdmin/>} />
+          <Route path="/admin/useradd" element={<UserAddAdmin/>} />
+          <Route path="/admin/useredit" element={<UserEditAdmin/>} />
         </Routes>
       </GlobalWrapper>
       <Footer />  {/* Footer tetap di bawah */}

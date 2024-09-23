@@ -62,7 +62,6 @@ const AddUser = () => {
 
   return (
     <>
-      <ResponsiveAppBar adminName={adminName} onLogout={handleLogout} />
       <ThemeProvider theme={theme}>
         <CssBaseline/>
         <AdminSidebar/>

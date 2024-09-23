@@ -166,7 +166,6 @@ const UserList = () => {
 
   return (
     <>
-      <ResponsiveAppBar adminName={adminName} onLogout={handleLogout} />
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AdminSidebar/>
@@ -218,7 +217,7 @@ const UserList = () => {
 
           <Button
             component={Link}
-            to="/admin/addUser"
+            to="/admin/useradd"
             variant="contained"
             color="primary"
             style={{
@@ -288,7 +287,7 @@ const UserList = () => {
                       </IconButton>
                       <IconButton
                         component={Link}
-                        to={`/admin/editUser/${user._id}`}
+                        to={`/admin/useredit/${user._id}`}
                         color="primary"
                       >
                         <EditIcon />
