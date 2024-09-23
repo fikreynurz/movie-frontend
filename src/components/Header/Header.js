@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, IconButton, Avatar, TextField, InputAdornment, Autocomplete } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -10,18 +10,28 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Status login
   const [role, setRole] = useState(''); // Role bisa 'user' atau 'admin'
+  const [name, setName] = useState(''); // Role bisa 'user' atau 'admin'
   const [profilePic, setProfilePic] = useState(''); // Link ke foto profil
   const [searchQuery, setSearchQuery] = useState('');  // State untuk search query
   const [suggestions, setSuggestions] = useState([]);  // State untuk menyimpan saran pencarian
   const navigate = useNavigate();
+  const user = localStorage.getItem("user")
+  const userParsed = JSON.parse(user)
+
+  useEffect(() => {
+    if (user) {
+      setIsLoggedIn(true)
+      setRole(userParsed.role)
+      setName(userParsed.name)
+    }
+  })
 
   const handleLogin = () => {
-    setIsLoggedIn(true);
-    setRole('admin'); // Ganti sesuai dengan role dari backend
-    setProfilePic('https://via.placeholder.com/150'); // Ganti dengan URL foto profil yang sebenarnya
+    navigate('/login')  
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("user");
     setIsLoggedIn(false);
     setAnchorEl(null);
     setRole('');
@@ -134,6 +144,7 @@ const Header = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
+              <MenuItem onClick={handleClose}>Name: {name}</MenuItem>
               <MenuItem onClick={handleClose}>Role: {role}</MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>

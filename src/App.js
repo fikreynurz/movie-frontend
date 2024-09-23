@@ -7,6 +7,8 @@ import GlobalWrapper from './components/GlobalWrapper/GlobalWrapper'; // Import 
 import Footer from './components/Footer/Footer';
 import FilterResults from './pages/FilterResults';
 import Profile from './pages/Profile';
+import Login from './components/Login/Login'
+import Register from './components/Register/Register'
 
 
 function App() {
@@ -20,6 +22,8 @@ function App() {
           <Route path="/search" element={<SearchResults />} />
           <Route path="/filter-results" element={<FilterResults/>} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </GlobalWrapper>
       <Footer />  {/* Footer tetap di bawah */}
