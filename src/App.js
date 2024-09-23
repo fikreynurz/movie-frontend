@@ -5,6 +5,9 @@ import Header from './components/Header/Header';
 import SearchResults from './pages/SearchResults';
 import GlobalWrapper from './components/GlobalWrapper/GlobalWrapper'; // Import GlobalWrapper
 import Footer from './components/Footer/Footer';
+import FilterResults from './pages/FilterResults';
+import Profile from './pages/Profile';
+
 
 function App() {
   return (
@@ -15,6 +18,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/movie/:id" element={<Detail />} />
           <Route path="/search" element={<SearchResults />} />
+          <Route path="/filter-results" element={<FilterResults/>} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </GlobalWrapper>
       <Footer />  {/* Footer tetap di bawah */}

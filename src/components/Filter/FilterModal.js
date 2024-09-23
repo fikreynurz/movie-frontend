@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Box, Typography, Checkbox, FormControlLabel, TextField, Grid } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';  // Tambahkan useNavigate untuk routing
 
-const FilterModal = ({ onApply }) => {
+const FilterModal = () => {
   const [open, setOpen] = useState(false);
   const [genres, setGenres] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [year, setYear] = useState('');
   const [rating, setRating] = useState('');
+  const navigate = useNavigate();  // Untuk mengarahkan ke halaman hasil
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -18,7 +20,6 @@ const FilterModal = ({ onApply }) => {
       try {
         const response = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US`);
         setGenres(response.data.genres);
-        console.log("Fetched genres:", response.data.genres); // Debugging log genre yang difetch
       } catch (error) {
         console.error("Error fetching genres", error);
       }
@@ -32,25 +33,13 @@ const FilterModal = ({ onApply }) => {
     setSelectedGenres(prev =>
       checked ? [...prev, value] : prev.filter(genre => genre !== value)
     );
-    console.log("Selected genres:", selectedGenres); // Debugging log genre yang dipilih
   };
 
-  // Ketika user apply filter
+  // Ketika user apply filter, redirect ke halaman hasil filter
   const handleApply = () => {
-    console.log("Applying filter with:", {
-      year,
-      rating,
-      genres: selectedGenres
-    });  // Debugging log untuk nilai filter yang diterapkan
-
-    if (typeof onApply === 'function') {
-      onApply({
-        year,
-        rating,
-        genres: selectedGenres
-      });
-    } else {
-      console.error('onApply is not a function');
+    if (selectedGenres.length > 0 || year || rating) {
+      // Redirect ke halaman hasil filter dengan parameter filter
+      navigate('/filter-results', { state: { year, rating, genres: selectedGenres } });
     }
     handleClose();
   };

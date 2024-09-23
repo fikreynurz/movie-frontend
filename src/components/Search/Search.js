@@ -1,20 +1,33 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Typography, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
+import { TextField, Button, Grid, Typography, Autocomplete } from '@mui/material';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate untuk routing
 
 const Search = () => {
   const [query, setQuery] = useState('');
-  const [searchType, setSearchType] = useState('title'); // Default: pencarian berdasarkan judul
+  const [suggestions, setSuggestions] = useState([]); // Menyimpan saran pencarian
   const navigate = useNavigate();  // Gunakan navigate untuk redirect
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (query === '') return;  // Jika input kosong, tidak melakukan pencarian
+    navigate('/search', { state: { query } });
+  };
 
-    try {
-      // Redirect ke halaman search dengan query dan tipe pencarian (judul/aktor) sebagai state
-      navigate('/search', { state: { query, searchType } });
-    } catch (error) {
-      console.error("Error fetching search results:", error);
+  // Fetch autocomplete suggestions saat user mengetik
+  const handleInputChange = async (event, value) => {
+    setQuery(value);
+    if (value) {
+      try {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/search/multi?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&query=${value}&page=1`
+        );
+        console.log(response.data.results);
+        setSuggestions(response.data.results);
+      } catch (error) {
+        console.error("Error fetching autocomplete suggestions:", error);
+      }
+    } else {
+      setSuggestions([]); // Kosongkan suggestions jika input kosong
     }
   };
 
@@ -27,33 +40,27 @@ const Search = () => {
   return (
     <div>
       <Typography variant="h4" component="h2" gutterBottom>
-        Search Movies or Actors
+        Search Movies and Actors
       </Typography>
-
-      {/* Radio Group untuk memilih pencarian berdasarkan Judul atau Aktor */}
-      <FormControl component="fieldset" style={{ marginBottom: '20px' }}>
-        <FormLabel component="legend">Search By</FormLabel>
-        <RadioGroup
-          row
-          aria-label="search-type"
-          name="search-type"
-          value={searchType}
-          onChange={(e) => setSearchType(e.target.value)}
-        >
-          <FormControlLabel value="title" control={<Radio />} label="Title" />
-          <FormControlLabel value="actor" control={<Radio />} label="Actor" />
-        </RadioGroup>
-      </FormControl>
 
       <Grid container spacing={2}>
         <Grid item xs={9}>
-          <TextField
-            label={`Search by ${searchType}`}
-            variant="outlined"
-            fullWidth
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}  // Menambahkan handler untuk enter
+          <Autocomplete
+            freeSolo
+            options={suggestions.map((option) =>
+              option.title ? option.title : option.name  // Jika title ada, tampilkan title, jika tidak tampilkan name
+            )}
+            onInputChange={handleInputChange}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search Movies or Actors"
+                variant="outlined"
+                fullWidth
+                value={query}
+                onKeyDown={handleKeyDown}  // Menambahkan handler untuk enter
+              />
+            )}
           />
         </Grid>
         <Grid item xs={3}>

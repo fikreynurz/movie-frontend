@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Grid, Box, Card, CardMedia, Avatar, Button, Divider } from '@mui/material';
+import { Container, Typography, Grid, Box, Card, CardMedia, Avatar, Button, Divider, Modal, Rating, TextField, CircularProgress } from '@mui/material';
 
 const Detail = () => {
   const { id } = useParams();  // Mengambil ID dari URL
   const [movie, setMovie] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [trailer, setTrailer] = useState(null); // State untuk trailer
+  const [loading, setLoading] = useState(true); // Tambahkan state untuk loading
+  const [showFullReview, setShowFullReview] = useState({ open: false, content: '' }); // State untuk full review modal
+  const [showMoreCast, setShowMoreCast] = useState(false); // State untuk show more cast
+  const [userRating, setUserRating] = useState(0); // State untuk rating pengguna
+  const [comment, setComment] = useState(''); // State untuk komentar pengguna
+  const [isFavorite, setIsFavorite] = useState(false); // State untuk mengelola status favorit
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
+      setLoading(true);  // Set loading menjadi true ketika mulai fetch data
       try {
         const response = await axios.get(
           `https://api.themoviedb.org/3/movie/${id}?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&append_to_response=credits,reviews,videos`
@@ -25,13 +32,45 @@ const Detail = () => {
         setTrailer(trailerData ? trailerData.key : null);
       } catch (error) {
         console.error("Error fetching movie details:", error);
+      } finally {
+        setLoading(false);  // Set loading menjadi false ketika data sudah di-fetch
       }
     };
     fetchMovieDetails();
   }, [id]);
 
+  // Function untuk membuka modal full review
+  const handleOpenFullReview = (content) => {
+    setShowFullReview({ open: true, content });
+  };
+
+  // Function untuk menutup modal full review
+  const handleCloseFullReview = () => {
+    setShowFullReview({ open: false, content: '' });
+  };
+
+  // Function untuk menambahkan/menyimpan film ke daftar favorit
+  const handleToggleFavorite = () => {
+    if (isFavorite) {
+      // Hapus dari favorit (disesuaikan dengan backend atau local storage)
+      console.log('Removing from favorites:', movie.title);
+    } else {
+      // Tambah ke favorit (disesuaikan dengan backend atau local storage)
+      console.log('Adding to favorites:', movie.title);
+    }
+    setIsFavorite(!isFavorite); // Ubah status favorit
+  };
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   if (!movie) {
-    return <Typography variant="h5">Loading...</Typography>;
+    return <Typography variant="h5">No movie details found.</Typography>;
   }
 
   return (
@@ -55,6 +94,16 @@ const Detail = () => {
               {movie.title}
             </Typography>
 
+            {/* Tombol Add to Favorites */}
+            <Button
+              variant="contained"
+              color={isFavorite ? 'secondary' : 'primary'}
+              onClick={handleToggleFavorite}
+              sx={{ mb: 2 }}
+            >
+              {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+            </Button>
+
             {/* Trailer Section */}
             {trailer ? (
               <Box my={2}>
@@ -69,9 +118,20 @@ const Detail = () => {
                 ></iframe>
               </Box>
             ) : (
-              <Typography variant="body1" color="textSecondary" gutterBottom>
-                Trailer not available.
-              </Typography>
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '400px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#f0f0f0'
+                }}
+              >
+                <Typography variant="h6" color="textSecondary">
+                  Trailer not available
+                </Typography>
+              </Box>
             )}
 
             <Typography variant="h6" color="textSecondary" gutterBottom>
@@ -92,7 +152,7 @@ const Detail = () => {
               Cast
             </Typography>
             <Grid container spacing={2}>
-              {movie.credits.cast.slice(0, 5).map((actor) => (
+              {(showMoreCast ? movie.credits.cast : movie.credits.cast.slice(0, 5)).map((actor) => (
                 <Grid item key={actor.id} xs={12} sm={6} md={4}>
                   <Box display="flex" alignItems="center">
                     <Avatar
@@ -108,6 +168,11 @@ const Detail = () => {
                 </Grid>
               ))}
             </Grid>
+            {movie.credits.cast.length > 5 && (
+              <Button onClick={() => setShowMoreCast(!showMoreCast)} sx={{ mt: 2 }}>
+                {showMoreCast ? 'Show Less' : 'Show More'}
+              </Button>
+            )}
           </Grid>
         </Grid>
 
@@ -123,7 +188,6 @@ const Detail = () => {
               <strong>{review.author}</strong>
             </Typography>
             <Typography variant="body2" color="textSecondary" paragraph>
-              {/* Potong ulasan jika lebih dari 200 karakter */}
               {review.content.length > 200
                 ? `${review.content.slice(0, 200)}...`
                 : review.content}
@@ -131,52 +195,50 @@ const Detail = () => {
             <Button
               variant="text"
               color="primary"
-              onClick={() => console.log(`Reading full review by ${review.author}`)}
+              onClick={() => handleOpenFullReview(review.content)}
             >
               Read Full Review
             </Button>
           </Box>
         ))}
 
-        {/* Add a comment section (Bootstrap) */}
-        <section style={{ backgroundColor: '#d94125', marginTop: '30px' }}>
-          <div className="container my-5 py-5 text-body">
-            <div className="row d-flex justify-content-center">
-              <div className="col-md-10 col-lg-8 col-xl-6">
-                <div className="card">
-                  <div className="card-body p-4">
-                    <div className="d-flex flex-start w-100">
-                      <img className="rounded-circle shadow-1-strong me-3"
-                        src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(21).webp" alt="avatar" width="65"
-                        height="65" />
-                      <div className="w-100">
-                        <h5>Add a comment</h5>
-                        <ul className="rating mb-3">
-                          <li><i className="far fa-star fa-sm text-danger" title="Bad"></i></li>
-                          <li><i className="far fa-star fa-sm text-danger" title="Poor"></i></li>
-                          <li><i className="far fa-star fa-sm text-danger" title="OK"></i></li>
-                          <li><i className="far fa-star fa-sm text-danger" title="Good"></i></li>
-                          <li><i className="far fa-star fa-sm text-danger" title="Excellent"></i></li>
-                        </ul>
-                        <div className="form-outline">
-                          <textarea className="form-control" id="textAreaExample" rows="4"></textarea>
-                          <label className="form-label" htmlFor="textAreaExample">What is your view?</label>
-                        </div>
-                        <div className="d-flex justify-content-between mt-3">
-                          <Button className="btn btn-success">Cancel</Button>
-                          <Button className="btn btn-danger">
-                            Send <i className="fas fa-long-arrow-alt-right ms-1"></i>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Modal untuk Full Review */}
+        <Modal open={showFullReview.open} onClose={handleCloseFullReview}>
+          <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', p: 4 }}>
+            <Typography variant="h6">Full Review</Typography>
+            <Typography variant="body2" sx={{ mt: 2 }}>{showFullReview.content}</Typography>
+            <Button onClick={handleCloseFullReview} sx={{ mt: 2 }} variant="contained" color="primary">
+              Close
+            </Button>
+          </Box>
+        </Modal>
 
+        {/* Add a comment section with Material UI */}
+        <Box sx={{ mt: 4 }}>
+          <Typography variant="h5" gutterBottom>
+            Add Your Review
+          </Typography>
+          <Rating
+            name="user-rating"
+            value={userRating}
+            onChange={(event, newValue) => setUserRating(newValue)}
+            precision={0.5}
+          />
+          <TextField
+            label="Write your comment"
+            fullWidth
+            multiline
+            rows={4}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            sx={{ mt: 2 }}
+          />
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+            <Button variant="contained" color="primary" onClick={() => console.log('Submit comment', comment, userRating)}>
+              Submit
+            </Button>
+          </Box>
+        </Box>
       </Box>
     </Container>
   );

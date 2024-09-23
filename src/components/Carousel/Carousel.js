@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Carousel from 'react-bootstrap/Carousel';  // Menggunakan Carousel dari React Bootstrap
-import { Container} from '@mui/material';
+import { Container } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const RecentCarousel = () => {
@@ -26,14 +26,18 @@ const RecentCarousel = () => {
           <Carousel.Item key={movie.id}>
             <img
               className="d-block w-100"
-              src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
+              src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}  
               alt={movie.title}
+              style={{
+                height: '500px',       // Atur tinggi gambar
+                objectFit: 'cover',     // Menjaga proporsi gambar agar tidak terdistorsi
+                borderRadius: '8px',    // Membuat gambar lebih halus dengan border-radius
+              }}
             />
             <Carousel.Caption>
               <h3>{movie.title}</h3>
-              <p>{movie.overview.slice(0, 100)}...</p>  {/* Teaser singkat */}
-              <p><strong>Release Date:</strong> {movie.release_date}</p>  {/* Tanggal Rilis */}
-              <p><strong>Duration:</strong> {movie.runtime} min</p>  {/* Durasi */}
+              <p>{movie.overview.slice(0, 100)}...</p> 
+              <p><strong>Release Date:</strong> {movie.release_date}</p>  
             </Carousel.Caption>
           </Carousel.Item>
         ))}

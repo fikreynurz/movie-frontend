@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, IconButton, Avatar } from '@mui/material';
-import { Link } from 'react-router-dom';
-import logo from '../../assets/images/logo.png'; // Pastikan path ini sesuai dengan folder Anda
-import FilterModal from '../FilterModal'; // Import modal filter
+import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, IconButton, Avatar, TextField, InputAdornment, Autocomplete } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import SearchIcon from '@mui/icons-material/Search';  // Tambahkan ikon pencarian
+import logo from '../../assets/images/logo.png';  // Pastikan path ini benar
+import FilterModal from '../Filter/FilterModal';  // Import modal filter
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Status login
   const [role, setRole] = useState(''); // Role bisa 'user' atau 'admin'
   const [profilePic, setProfilePic] = useState(''); // Link ke foto profil
+  const [searchQuery, setSearchQuery] = useState('');  // State untuk search query
+  const [suggestions, setSuggestions] = useState([]);  // State untuk menyimpan saran pencarian
+  const navigate = useNavigate();
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -31,6 +36,35 @@ const Header = () => {
     setAnchorEl(null);
   };
 
+  const handleSearch = () => {
+    if (searchQuery !== '') {
+      navigate('/search', { state: { query: searchQuery } });
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handleInputChange = async (event, value) => {
+    setSearchQuery(value);
+    if (value) {
+      try {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/search/multi?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&query=${value}&page=1`
+        );
+        console.log(response.data.results);
+        setSuggestions(response.data.results);
+      } catch (error) {
+        console.error("Error fetching autocomplete suggestions:", error);
+      }
+    } else {
+      setSuggestions([]);  // Kosongkan suggestions jika input kosong
+    }
+  };
+
   return (
     <AppBar position="sticky" sx={{ zIndex: 1100 }}>  {/* Menggunakan position sticky */}
       <Toolbar>
@@ -47,7 +81,45 @@ const Header = () => {
           JAKRIE
         </Typography>
 
-        {/* Tombol Filter di sebelah kiri tombol Login */}
+        {/* Input Search dengan Autocomplete */}
+        <Autocomplete
+          freeSolo
+          options={suggestions.map((option) =>
+            option.title ? option.title : option.name  // Tampilkan title jika ada, jika tidak name
+          )}
+          onInputChange={handleInputChange}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Search Movies or Actors"
+              variant="outlined"
+              size="small"
+              value={searchQuery}
+              onKeyDown={handleKeyDown}  // Trigger pencarian ketika Enter ditekan
+              sx={{
+                backgroundColor: 'white',  // Latar belakang putih
+                borderRadius: '4px',  // Membuat ujung kotak search menjadi rounded
+                marginRight: '10px',
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: 'white',  // Hilangkan border default
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#1976d2',  // Warna border saat hover
+                  },
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
+        />
+
         <FilterModal />  {/* Modal Filter yang bisa di-trigger dari Header */}
 
         {/* Login atau Profile setelah login */}
@@ -65,6 +137,10 @@ const Header = () => {
               <MenuItem onClick={handleClose}>Role: {role}</MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
+            {/* Profile button */}
+            <Button color="inherit" component={Link} to="/profile">
+              Profile
+            </Button>
           </>
         ) : (
           <Button color="inherit" onClick={handleLogin}>

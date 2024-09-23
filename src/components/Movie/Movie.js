@@ -1,34 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Grid, Card, CardMedia, CardContent, Typography, Button } from '@mui/material';
+import React from 'react';
+import { Card, CardMedia, CardContent, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-const Movie = ({ category }) => {
-  const [movies, setMovies] = useState([]);
-
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const endpoint = category === "popular" 
-          ? `https://api.themoviedb.org/3/movie/popular?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&page=1`
-          : `https://api.themoviedb.org/3/movie/now_playing?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&page=1`;
-        const response = await axios.get(endpoint);
-        setMovies(response.data.results);
-      } catch (error) {
-        console.error(`Error fetching ${category} movies:`, error);
-      }
-    };
-    fetchMovies();
-  }, [category]);
-
+const Movie = ({ movies }) => {
   if (!movies || movies.length === 0) {
-    return <Typography variant="h5">No {category} movies found or loading...</Typography>;
+    return <Typography variant="h5">No movies found or loading...</Typography>;
   }
 
   return (
-    <Grid container spacing={4}>
-      {movies.slice(0, 10).map((movie) => (
-        <Grid item xs={12} sm={6} md={4} lg={2} key={movie.id}>
+    <>
+      {movies.map((movie) => (
+        <Box key={movie.id} sx={{ minWidth: 200 }}>
           <Card
             sx={{
               height: '100%',
@@ -49,7 +31,7 @@ const Movie = ({ category }) => {
               component="img"
               image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={movie.title}
-              sx={{ height: 350, objectFit: 'cover' }}
+              sx={{ height: 350, objectFit: 'cover', borderRadius: '8px' }}
             />
             <CardContent sx={{ flexGrow: 1 }}>
               <Typography variant="h6" component="div" noWrap>
@@ -64,24 +46,21 @@ const Movie = ({ category }) => {
               color="primary"
               component={Link}
               to={`/movie/${movie.id}`}
-              onClick={() => console.log(`Navigating to /movie/${movie.id}`)}
               sx={{
                 width: '100%',
                 marginTop: 'auto',
                 backgroundColor: '#1976d2',
-                transition: 'background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
                 '&:hover': {
                   backgroundColor: '#2196f3',
-                  boxShadow: '0px 4px 15px rgba(0, 123, 255, 0.6)',
                 },
               }}
             >
               View Details
             </Button>
           </Card>
-        </Grid>
+        </Box>
       ))}
-    </Grid>
+    </>
   );
 };
 
