@@ -15,7 +15,6 @@ import {
   IconButton,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import ResponsiveAppBar from "../AdminNavbar";
 import AdminSidebar from "../AdminSidebar";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
@@ -64,14 +63,8 @@ const GenreList = () => {
     },
   });
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    window.location.href = "/login";
-  };
-
   return (
     <>
-      <ResponsiveAppBar adminName={adminName} onLogout={handleLogout} />
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AdminSidebar />

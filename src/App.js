@@ -12,6 +12,8 @@ import Register from './components/Register/Register'
 import UserListAdmin from './components/AdminPage/User/UserList'
 import UserAddAdmin from './components/AdminPage/User/AddUser'
 import UserEditAdmin from './components/AdminPage/User/EditUser'
+import GenreList from './components/AdminPage/Genre/GenreList';
+import ReviewList from './components/AdminPage/Review/ReviewList';
 
 
 function App() {
@@ -27,9 +29,14 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
           <Route path="/admin/userlist" element={<UserListAdmin/>} />
           <Route path="/admin/useradd" element={<UserAddAdmin/>} />
-          <Route path="/admin/useredit" element={<UserEditAdmin/>} />
+          <Route path="/admin/useredit/:_id" element={<UserEditAdmin/>} />
+
+          <Route path="/admin/genre" element={<GenreList/>} />
+          
+          <Route path="/admin/review" element={<ReviewList/>} />
         </Routes>
       </GlobalWrapper>
       <Footer />  {/* Footer tetap di bawah */}

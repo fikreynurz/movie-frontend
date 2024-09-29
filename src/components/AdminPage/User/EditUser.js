@@ -13,7 +13,6 @@ import {
   createTheme,
   CssBaseline,
 } from "@mui/material";
-import ResponsiveAppBar from "../AdminNavbar";
 import AdminSidebar from "../AdminSidebar";
 
 const EditUser = () => {
@@ -70,10 +69,6 @@ const EditUser = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    window.location.href = "/login";
-  };
 
   const handleCloseModal = () => {
     setShowModal(false);

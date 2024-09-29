@@ -24,7 +24,6 @@ import {
   TablePagination,
 } from "@mui/material";
 import ResponsiveAppBar from "../AdminNavbar";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SearchIcon from "@mui/icons-material/Search";
@@ -187,7 +186,6 @@ const ReviewList = () => {
 
   return (
     <>
-      <ResponsiveAppBar adminName={adminName} onLogout={handleLogout} />
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AdminSidebar />

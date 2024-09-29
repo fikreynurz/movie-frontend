@@ -10,7 +10,7 @@ const RecentCarousel = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/films`);
+        const response = await axios.get(`http://localhost:5000/api/movies/upcoming`);
         setMovies(response.data);
       } catch (error) {
         console.error("Error fetching the recent movies", error);
