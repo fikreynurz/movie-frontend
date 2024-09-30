@@ -5,7 +5,9 @@ import { Container, Typography, Grid, Box, Card, CardMedia, Avatar, Button, Divi
 
 const Detail = () => {
   const { id } = useParams();  // Mengambil ID dari URL
-  const [movie, setMovie] = useState(null);
+  const [movie, setMovie] = useState({});
+  const [cast, setCast] = useState([]);
+  const [genre, setGenre] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [trailer, setTrailer] = useState(null); // State untuk trailer
   const [loading, setLoading] = useState(true); // Tambahkan state untuk loading
@@ -20,16 +22,19 @@ const Detail = () => {
       setLoading(true);  // Set loading menjadi true ketika mulai fetch data
       try {
         const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/${id}?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&append_to_response=credits,reviews,videos`
+          // `https://api.themoviedb.org/3/movie/${id}?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&append_to_response=credits,reviews,videos`
+          `http://localhost:5000/api/movies/append/${id}`
         );
-        setMovie(response.data);
-        setReviews(response.data.reviews.results.slice(0, 3));  // Ambil 3 ulasan pertama
-
+        setMovie(response.data.movie);
+        setReviews(response.data.review.reviews.slice(0, 3));  // Ambil 3 ulasan pertama
+        
         // Mengambil video dari API response
-        const trailerData = response.data.videos.results.find(
+        const trailerData = response.data.video.videos.find(
           (video) => video.type === 'Trailer' && video.site === 'YouTube'
         );
         setTrailer(trailerData ? trailerData.key : null);
+        setCast(response.data.cast.cast)
+        setGenre(response.data.genre)
       } catch (error) {
         console.error("Error fetching movie details:", error);
       } finally {
@@ -140,11 +145,11 @@ const Detail = () => {
 
             {/* Tambahkan Negara Produksi */}
             <Typography variant="body1" gutterBottom>
-              <strong>Production Countries:</strong> {movie.production_countries.map((country) => country.name).join(', ')}
+              <strong>Production Countries:</strong> {movie.production_countries.map((country) => country.english_name).join(', ')}
             </Typography>
 
             <Typography variant="body1" gutterBottom>
-              <strong>Genres:</strong> {movie.genres.map((genre) => genre.name).join(', ')}
+              <strong>Genres:</strong> {genre.map((genre) => genre.name).join(', ')}
             </Typography>
 
             <Typography variant="body1" paragraph>
@@ -166,7 +171,7 @@ const Detail = () => {
               Cast
             </Typography>
             <Grid container spacing={2}>
-              {(showMoreCast ? movie.credits.cast : movie.credits.cast.slice(0, 5)).map((actor) => (
+              {(showMoreCast ? cast : cast.slice(0, 5)).map((actor) => (
                 <Grid item key={actor.id} xs={12} sm={6} md={4}>
                   <Box display="flex" alignItems="center">
                     <Avatar
@@ -182,7 +187,7 @@ const Detail = () => {
                 </Grid>
               ))}
             </Grid>
-            {movie.credits.cast.length > 5 && (
+            {cast.length > 5 && (
               <Button onClick={() => setShowMoreCast(!showMoreCast)} sx={{ mt: 2 }}>
                 {showMoreCast ? 'Show Less' : 'Show More'}
               </Button>

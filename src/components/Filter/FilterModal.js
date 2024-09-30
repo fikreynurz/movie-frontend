@@ -20,7 +20,10 @@ const FilterModal = () => {
   useEffect(() => {
     const fetchGenres = async () => {
       try {
-        const response = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US`);
+        const response = await axios.get(
+          // `https://api.themoviedb.org/3/genre/movie/list?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US`
+          `http://localhost:5000/api/genres`
+        );
         setGenres(response.data.genres);
       } catch (error) {
         console.error("Error fetching genres", error);
@@ -33,7 +36,10 @@ const FilterModal = () => {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await axios.get(`https://api.themoviedb.org/3/configuration/countries?api_key=ac18a0e6818325589a5c34b35da509ab`);
+        const response = await axios.get(
+          // `https://api.themoviedb.org/3/configuration/countries?api_key=ac18a0e6818325589a5c34b35da509ab`
+          `http://localhost:5000/api/countries`
+        );
         setCountries(response.data);
       } catch (error) {
         console.error("Error fetching countries", error);
