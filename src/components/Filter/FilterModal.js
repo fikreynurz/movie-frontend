@@ -121,7 +121,7 @@ const FilterModal = () => {
               None
             </MenuItem>
             {countries.map((country) => (
-              <MenuItem key={country.iso_3166_1} value={country.iso_3166_1}>
+              <MenuItem key={country.alias} value={country.alias}>
                 {country.english_name}
               </MenuItem>
             ))}

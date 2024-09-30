@@ -23,12 +23,10 @@ import {
   CssBaseline,
   TablePagination,
 } from "@mui/material";
-import ResponsiveAppBar from "../AdminNavbar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SearchIcon from "@mui/icons-material/Search";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import AdminSidebar from "../AdminSidebar";
 
 const ReviewList = () => {
   const [reviews, setReviews] = useState([]);
@@ -40,7 +38,6 @@ const ReviewList = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
-  const [adminName, setAdminName] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -48,30 +45,20 @@ const ReviewList = () => {
     const getReviews = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/reviews");
-        console.log("Response data:", response.data); // Log response data
 
         const allReviews = [];
-        response.data.forEach((reviewData) => {
-          if (reviewData && reviewData.reviews && reviewData.reviews.results) {
-            const reviewsWithFilmId = reviewData.reviews.results.map(
-              (review) => ({
-                ...review,
-                film_id: reviewData.film_id,
-                avatar_path: reviewData.avatar_path || "", // Assuming avatar_path is part of reviewData
-              })
-            );
+        response.data.forEach((movie) => {
+          if (movie && movie.reviews) {
+            const reviewsWithFilmId = movie.reviews.map((review) => ({
+              ...review,
+              movie_id: movie.movie_id,  // Attach movie_id to each review
+            }));
             allReviews.push(...reviewsWithFilmId);
-          } else {
-            console.error("Unexpected response structure:", reviewData);
           }
         });
 
         setReviews(allReviews);
         setFilteredReviews(allReviews);
-
-        const userLogged = localStorage.getItem("user");
-        const userParsed = JSON.parse(userLogged);
-        setAdminName(userParsed.name);
       } catch (error) {
         console.error("Error fetching reviews:", error);
       }
@@ -92,11 +79,10 @@ const ReviewList = () => {
 
     if (searchFilmId) {
       filtered = filtered.filter((review) =>
-        review.film_id.toString().includes(searchFilmId)
+        review.movie_id.toString().includes(searchFilmId)
       );
     }
 
-    console.log("Filtered reviews:", filtered); // Log filtered reviews
     setFilteredReviews(filtered);
   }, [searchQuery, searchFilmId, reviews]);
 
@@ -112,11 +98,6 @@ const ReviewList = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    window.location.href = "/login";
   };
 
   const handleDelete = (id) => {
@@ -188,7 +169,6 @@ const ReviewList = () => {
     <>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AdminSidebar />
         <Container maxWidth="lg" style={{ marginTop: "50px" }}>
           <Typography variant="h4" align="center" gutterBottom>
             Review List
@@ -266,7 +246,7 @@ const ReviewList = () => {
                           color="primary"
                         />
                       </TableCell>
-                      <TableCell>{review.film_id}</TableCell>
+                      <TableCell>{review.movie_id}</TableCell>
                       <TableCell>{review.author}</TableCell>
                       <TableCell>
                         {review.content.length > 100
@@ -303,6 +283,7 @@ const ReviewList = () => {
             />
           </TableContainer>
 
+          {/* Detail Modal */}
           <Dialog open={showDetailModal} onClose={closeDetailModal}>
             <DialogTitle>Review Details</DialogTitle>
             <DialogContent>
@@ -315,9 +296,9 @@ const ReviewList = () => {
                         src={`https://image.tmdb.org/t/p/w200${selectedReview.author_details.avatar_path}`}
                         alt="Avatar"
                         style={{
-                          width: "500px",
+                          width: "100px",
                           height: "auto",
-                          borderRadius: "0%",
+                          borderRadius: "50%",
                         }}
                       />
                     </DialogContentText>
@@ -356,6 +337,7 @@ const ReviewList = () => {
             </DialogActions>
           </Dialog>
 
+          {/* Delete Confirmation Modal */}
           <Dialog
             open={showDeleteModal}
             onClose={() => setShowDeleteModal(false)}
