@@ -26,9 +26,9 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/users/login",
+        "http://10.10.131.248:5000/api/users/login",
         {
-          email,
+          email, 
           password,
         }
       );
@@ -50,7 +50,7 @@ const Login = () => {
     const { credential } = response;
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/users/auth/google/login",
+        "http://10.10.131.248:5000/api/users/auth/google/login",
         { idToken: credential }
       );
       const data = res.data;

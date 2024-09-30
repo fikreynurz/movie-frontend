@@ -47,18 +47,15 @@ const Home = () => {
   return (
     <>
       <Container maxWidth="lg">
-        {/* Carousel tetap ditampilkan */}
         <Box my={4}>
-          <RecentCarousel />  {/* Ini akan menampilkan carousel dengan recent movies */}
+          <RecentCarousel />
         </Box>
-        
-        {/* Popular Movies */}
         <Box my={4}>
           <Typography variant="h4" component="h2" gutterBottom>
             Popular Movies
           </Typography>
 
-          {/* Tampilkan loading state jika data masih di-fetch */}
+          {/* Flexbox with nowrap and overflowX for horizontal scroll */}
           {loadingPopular ? (
             <Box display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />
@@ -72,13 +69,12 @@ const Home = () => {
           )}
         </Box>
 
-        {/* Recent Movies */}
+        {/* Repeat the same approach for Recent Movies */}
         <Box my={4}>
           <Typography variant="h4" component="h2" gutterBottom>
             Recent Movies
           </Typography>
 
-          {/* Tampilkan loading state jika data masih di-fetch */}
           {loadingRecent ? (
             <Box display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />

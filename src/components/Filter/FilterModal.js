@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Box, Typography, Checkbox, FormControlLabel, TextField, Grid } from '@mui/material';
+import { Button, Modal, Box, Typography, Checkbox, FormControlLabel, Grid, MenuItem, Rating, TextField } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';  // Tambahkan useNavigate untuk routing
 
@@ -8,8 +8,10 @@ const FilterModal = () => {
   const [genres, setGenres] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [year, setYear] = useState('');
-  const [rating, setRating] = useState('');
-  const navigate = useNavigate();  // Untuk mengarahkan ke halaman hasil
+  const [rating, setRating] = useState(0);  // Ubah menjadi state untuk Rating (bintang)
+  const [countries, setCountries] = useState([]);  
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const navigate = useNavigate();  
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -27,6 +29,19 @@ const FilterModal = () => {
     fetchGenres();
   }, []);
 
+  // Fetch countries data from TMDb API
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get(`https://api.themoviedb.org/3/configuration/countries?api_key=ac18a0e6818325589a5c34b35da509ab`);
+        setCountries(response.data);
+      } catch (error) {
+        console.error("Error fetching countries", error);
+      }
+    };
+    fetchCountries();
+  }, []);
+
   // Ketika genre diubah
   const handleGenreChange = (event) => {
     const { value, checked } = event.target;
@@ -35,11 +50,10 @@ const FilterModal = () => {
     );
   };
 
-  // Ketika user apply filter, redirect ke halaman hasil filter
+  // Function untuk apply filter
   const handleApply = () => {
-    if (selectedGenres.length > 0 || year || rating) {
-      // Redirect ke halaman hasil filter dengan parameter filter
-      navigate('/filter-results', { state: { year, rating, genres: selectedGenres } });
+    if (selectedGenres.length > 0 || year || rating || selectedCountry) {
+      navigate('/filter-results', { state: { year, rating, genres: selectedGenres, country: selectedCountry } });
     }
     handleClose();
   };
@@ -78,15 +92,34 @@ const FilterModal = () => {
             sx={{ mt: 2 }}
           />
 
-          {/* Input Rating */}
-          <TextField
-            label="Rating"
-            type="number"
-            fullWidth
+          {/* Input Rating dalam bentuk Bintang */}
+          <Typography variant="body1" gutterBottom sx={{ mt: 2 }}>
+            Rating
+          </Typography>
+          <Rating
             value={rating}
-            onChange={(e) => setRating(e.target.value)}
-            sx={{ mt: 2 }}
+            onChange={(event, newValue) => setRating(newValue)}  // Update rating berdasarkan input bintang
+            precision={0.5}
           />
+
+          {/* Select Negara */}
+          <TextField
+            label="Country"
+            select
+            fullWidth
+            value={selectedCountry}
+            onChange={(e) => setSelectedCountry(e.target.value)}
+            sx={{ mt: 2 }}
+          >
+            <MenuItem value="">
+              None
+            </MenuItem>
+            {countries.map((country) => (
+              <MenuItem key={country.iso_3166_1} value={country.iso_3166_1}>
+                {country.english_name}
+              </MenuItem>
+            ))}
+          </TextField>
 
           <Button variant="contained" color="primary" fullWidth onClick={handleApply} sx={{ mt: 3 }}>
             Apply Filter

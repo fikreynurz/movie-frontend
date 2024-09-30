@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 const FilterResults = () => {
   const location = useLocation();
-  const { year, rating, genres } = location.state || {};
+  const { year, rating, genres, country } = location.state || {};
   
   // States for filtered movies, pagination, total pages, and loading
   const [filteredMovies, setFilteredMovies] = useState([]);
@@ -17,7 +17,7 @@ const FilterResults = () => {
   useEffect(() => {
     const fetchFilteredMovies = async () => {
       setLoading(true);  // Set loading to true before fetching data
-
+  
       let url = `https://api.themoviedb.org/3/discover/movie?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&sort_by=popularity.desc&page=${page}`;  // Add page to URL
       
       // Add year filter
@@ -25,14 +25,19 @@ const FilterResults = () => {
         url += `&primary_release_year=${year}`;
       }
   
-      // Add rating filter
+      // Add rating filter (greater than or equal)
       if (rating) {
-        url += `&vote_average.gte=${rating}`;
+        url += `&vote_average.gte=${rating * 2}`;  // Multiply by 2 since TMDB rating is out of 10
       }
   
       // Add genre filter
       if (genres && genres.length > 0) {
         url += `&with_genres=${genres.join(',')}`;
+      }
+  
+      // Add country filter using production countries
+      if (country) {
+        url += `&with_origin_country=${country}`;
       }
   
       try {
@@ -45,10 +50,10 @@ const FilterResults = () => {
         setLoading(false);  // Set loading to false after data is fetched
       }
     };
-
+  
     fetchFilteredMovies();
-  }, [year, rating, genres, page]);  // Add `page` as a dependency to refetch data when the page changes
-
+  }, [year, rating, genres, country, page]);  // Add `page` as a dependency to refetch data when the page changes
+  
   // Handle page change
   const handlePageChange = (event, value) => {
     setPage(value);  // Update the current page

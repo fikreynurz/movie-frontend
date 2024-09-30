@@ -137,15 +137,29 @@ const Detail = () => {
             <Typography variant="h6" color="textSecondary" gutterBottom>
               {movie.release_date} | {movie.runtime} minutes
             </Typography>
+
+            {/* Tambahkan Negara Produksi */}
+            <Typography variant="body1" gutterBottom>
+              <strong>Production Countries:</strong> {movie.production_countries.map((country) => country.name).join(', ')}
+            </Typography>
+
             <Typography variant="body1" gutterBottom>
               <strong>Genres:</strong> {movie.genres.map((genre) => genre.name).join(', ')}
             </Typography>
+
             <Typography variant="body1" paragraph>
               <strong>Synopsis:</strong> {movie.overview}
             </Typography>
 
+            {/* Tampilkan Rating sebagai Bintang */}
             <Typography variant="body1" gutterBottom>
-              <strong>Rating:</strong> {movie.vote_average} / 10
+              <strong>Rating:</strong>
+              <Rating
+                value={Math.round(movie.vote_average) / 2}  // Bagi dua karena rating TMDB dari 10, sedangkan rating bintang biasanya dari 5
+                readOnly
+                precision={0.5}  // Bintang setengah diperbolehkan
+              />{' '}
+              ({Math.round(movie.vote_average)}/10)
             </Typography>
 
             <Typography variant="h5" gutterBottom>
