@@ -18,7 +18,7 @@ const FilterResults = () => {
     const fetchFilteredMovies = async () => {
       setLoading(true);  // Set loading to true before fetching data
   
-      let url = `https://api.themoviedb.org/3/discover/movie?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&sort_by=popularity.desc&page=${page}`;  // Add page to URL
+      let url = `https://api.themoviedb.org/3/discover/movie?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&sort_by=popularity.desc&page=${page}&include_adult=false&include_video=false`;
       
       // Add year filter
       if (year) {
@@ -42,7 +42,7 @@ const FilterResults = () => {
   
       try {
         const response = await axios.get(url);
-        setFilteredMovies(response.data.results);
+        setFilteredMovies(response.data.results.slice(0, 20));  // Tampilkan hanya 20 film
         setTotalPages(response.data.total_pages);  // Set the total pages from the API response
       } catch (error) {
         console.error("Error fetching filtered movies", error);
@@ -73,9 +73,14 @@ const FilterResults = () => {
         <Typography variant="h5">No movies found matching the filter criteria.</Typography>
       ) : (
         <>
-          <Grid container spacing={4} style={{ marginTop: '20px' }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center' }}>
             {filteredMovies.map((movie) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={movie.id}>
+              <Box key={movie.id} sx={{
+                flexGrow: 1,        
+                minWidth: '200px',  
+                maxWidth: '250px',  
+                margin: '10px',    
+              }}>
                 <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#1c1c1c', color: '#fff', borderRadius: '8px' }}>
                   <CardMedia
                     component="img"
@@ -101,16 +106,15 @@ const FilterResults = () => {
                     View Details
                   </Button>
                 </Card>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
 
-          {/* Pagination Component */}
           <Box display="flex" justifyContent="center" mt={4}>
             <Pagination
-              count={totalPages}  // Total pages from API
-              page={page}         // Current page
-              onChange={handlePageChange}  // Change page handler
+              count={totalPages}
+              page={page}
+              onChange={handlePageChange}
               color="primary"
               size="large"
             />

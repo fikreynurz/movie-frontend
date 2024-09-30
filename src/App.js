@@ -14,6 +14,8 @@ import UserAddAdmin from './components/AdminPage/User/AddUser'
 import UserEditAdmin from './components/AdminPage/User/EditUser'
 import GenreList from './components/AdminPage/Genre/GenreList';
 import ReviewList from './components/AdminPage/Review/ReviewList';
+import RecentMovie from './pages/CatRecentMovie';
+import PopularMovie from './pages/CatPopularMovie';
 
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/cat/recent-movies" element={<RecentMovie />} />
+          <Route path="/cat/popular-movies" element={<PopularMovie />} />
 
           <Route path="/admin/userlist" element={<UserListAdmin/>} />
           <Route path="/admin/useradd" element={<UserAddAdmin/>} />

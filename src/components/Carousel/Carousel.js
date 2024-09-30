@@ -10,8 +10,8 @@ const RecentCarousel = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/movies/upcoming`);
-        setMovies(response.data);
+        const response = await axios.get(`https://api.themoviedb.org/3/movie/upcoming?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US`);
+        setMovies(response.data.results);  // Ambil array 'results' dari respons API
       } catch (error) {
         console.error("Error fetching the recent movies", error);
       }
