@@ -17,9 +17,10 @@ const Home = () => {
       setLoadingPopular(true);  // Set loading jadi true saat mulai fetch data popular
       try {
         const response = await axios.get(
-          // `https://api.themoviedb.org/3/movie/popular?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US`
+          // `http://localhost:5000/api/movies/popular`
           'http://localhost:5000/api/movies/popular'
         );
+        setPopularMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
         console.log(response.data);
         setPopularMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
       } catch (error) {
@@ -33,9 +34,10 @@ const Home = () => {
       setLoadingRecent(true);  // Set loading jadi true saat mulai fetch data recent
       try {
         const response = await axios.get(
-          // `https://api.themoviedb.org/3/movie/now_playing?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US`
+          // `http://localhost:5000/api/movies/recent`
           'http://localhost:5000/api/movies/recent'
         );
+        setRecentMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
         setRecentMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
       } catch (error) {
         console.error("Error fetching recent movies:", error);
