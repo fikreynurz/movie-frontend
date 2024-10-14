@@ -64,7 +64,7 @@ const Header = () => {
     if (value) {
       try {
         const response = await axios.get(
-          `https://api.themoviedb.org/3/search/multi?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&query=${value}&page=1`
+          `http://localhost:5000/api/movies/search?query=${value}`
         );
         console.log(response.data.results);
         setSuggestions(response.data.results);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { Grid, Typography, Card, CardMedia, CardContent, Button, Box, Pagination, CircularProgress } from '@mui/material';
+import {Typography, Card, CardMedia, CardContent, Button, Box, Pagination, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const FilterResults = () => {
@@ -11,43 +11,40 @@ const FilterResults = () => {
   // States for filtered movies, pagination, total pages, and loading
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [page, setPage] = useState(1);  // Current page
-  const [totalPages, setTotalPages] = useState(1);  // Total pages from API
+  const [totalPages, setTotalPages] = useState(1);  // Total pages
   const [loading, setLoading] = useState(false);  // State for loading
 
   useEffect(() => {
     const fetchFilteredMovies = async () => {
       setLoading(true);  // Set loading to true before fetching data
   
-      let url = `https://api.themoviedb.org/3/discover/movie?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&sort_by=popularity.desc&page=${page}&include_adult=false&include_video=false`;
-      
-      // Add year filter
+      let url = `http://localhost:5000/api/movies/filter?`;
+
+      // Kirim filter sebagai query parameters
       if (year) {
-        url += `&primary_release_year=${year}`;
+        url += `&year=${year}`;
       }
   
-      // Add rating filter (greater than or equal)
       if (rating) {
-        url += `&vote_average.gte=${rating * 2}`;  // Multiply by 2 since TMDB rating is out of 10
+        url += `&rating=${rating}`;
       }
   
-      // Add genre filter
       if (genres && genres.length > 0) {
-        url += `&with_genres=${genres.join(',')}`;
+        url += `&genres=${genres.join(',')}`;
       }
   
-      // Add country filter using production countries
       if (country) {
-        url += `&with_origin_country=${country}`;
+        url += `&country=${country}`;
       }
   
       try {
         const response = await axios.get(url);
-        setFilteredMovies(response.data.results.slice(0, 20));  // Tampilkan hanya 20 film
-        setTotalPages(response.data.total_pages);  // Set the total pages from the API response
+        setFilteredMovies(response.data);  // Ambil data dari API
+        setTotalPages(1);  // Set total halaman (jika diperlukan)
       } catch (error) {
         console.error("Error fetching filtered movies", error);
       } finally {
-        setLoading(false);  // Set loading to false after data is fetched
+        setLoading(false);  // Set loading to false setelah data di-fetch
       }
     };
   
