@@ -32,6 +32,16 @@ const Detail = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  // Helper function to safely format dates
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Unknown date';
+    
+    const date = new Date(dateString);
+    if (isNaN(date)) return 'Unknown date';
+    
+    return format(date, 'PPP');
+  };
+
   // Cek status login dan ambil data pengguna dari localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -57,6 +67,9 @@ const Detail = () => {
         setMovie(response.data.movie);
         setReviews(response.data.review ? response.data.review.reviews : []);
 
+        // Log the reviews to inspect their structure
+        console.log("Fetched Reviews:", response.data.review ? response.data.review.reviews : []);
+
         const trailerData = response.data.video.videos.find(
           (video) => video.type === 'Trailer' && video.site === 'YouTube'
         );
@@ -79,17 +92,22 @@ const Detail = () => {
       return;
     }
 
+    // If the backend expects ratings out of 10, multiply by 2
+    const scaledRating = userRating * 2;
+
     const newReview = {
       movie_id: parseInt(id, 10), // Pastikan movie_id adalah Number sesuai dengan schema
       author: user ? user.name : authorName.trim(), // Gunakan nama dari user jika login
       author_details: {
         name: user ? user.name : authorName.trim(),
-        username: user ? user.name.toLowerCase().replace(/\s+/g, '_') : authorName.trim().toLowerCase().replace(/\s+/g, '_'), // Contoh sederhana pembuatan username
+        username: user 
+          ? user.name.toLowerCase().replace(/\s+/g, '_') 
+          : authorName.trim().toLowerCase().replace(/\s+/g, '_'), // Contoh sederhana pembuatan username
         avatar_path: user ? user.avatar_path : null, // Gunakan avatar dari user jika tersedia
-        rating: userRating,
+        rating: scaledRating, // Mengirimkan rating yang telah diskalakan
       },
       content: comment,
-      rating: userRating, // Menambahkan rating ke review
+      rating: scaledRating, // Menambahkan rating ke review
       url: null, // Jika ada URL ulasan
     };
 
@@ -102,7 +120,12 @@ const Detail = () => {
         setComment('');
         if (!user) setAuthorName('');
         // Update state reviews dengan ulasan baru yang sudah disimpan di backend
-        setReviews(prevReviews => [response.data.review, ...prevReviews].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 3));
+        setReviews(prevReviews => [
+          response.data.review, 
+          ...prevReviews
+        ]
+        .sort((a, b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt))
+        .slice(0, 3));
       } else {
         setSnackbar({ open: true, message: 'Failed to add review.', severity: 'error' });
       }
@@ -195,7 +218,8 @@ const Detail = () => {
             )}
 
             <Typography variant="h6" color="textSecondary" gutterBottom>
-              {movie.release_date} | {movie.runtime} minutes
+              {movie.release_date} 
+              {/* | {movie.runtime} minutes */}
             </Typography>
 
             {/* Tambahkan Negara Produksi */}
@@ -269,10 +293,17 @@ const Detail = () => {
                 <Grid item>
                   <Typography variant="body1"><strong>{review.author}</strong></Typography>
                   <Typography variant="body2" color="textSecondary">
-                    <Rating value={review.rating} readOnly precision={0.5} /> ({review.rating} / 5)
+                    {/* Scale the rating down by 2 if it's out of 10 */}
+                    <Rating 
+                      value={Math.round(review.author_details.rating) / 2} 
+                      readOnly 
+                      precision={0.5} 
+                    />{' '}
+                    ({review.author_details.rating} / 10)
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    {format(new Date(review.createdAt), 'PPP')} {/* Format tanggal */}
+                    {/* Use the helper function to format the date */}
+                    {formatDate(review.created_at || review.createdAt)}
                   </Typography>
                 </Grid>
               </Grid>
