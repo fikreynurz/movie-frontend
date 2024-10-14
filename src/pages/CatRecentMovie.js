@@ -15,9 +15,10 @@ const CatRecentMovie = () => {
       setLoadingRecent(true);  // Set loading jadi true saat mulai fetch data recent
       try {
         const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/now_playing?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&page=${currentPage}`
+          // `https://api.themoviedb.org/3/movie/now_playing?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&page=${currentPage}`
+          'http://localhost:5000/api/movies/recent'
         );
-        setRecentMovies(response.data.results); // Tampilkan semua film
+        setRecentMovies(response.data); // Tampilkan semua film
         setTotalPages(response.data.total_pages); // Simpan total halaman dari API
       } catch (error) {
         console.error("Error fetching recent movies:", error);

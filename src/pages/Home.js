@@ -17,8 +17,11 @@ const Home = () => {
       setLoadingPopular(true);  // Set loading jadi true saat mulai fetch data popular
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/movies/popular`
+          // `http://localhost:5000/api/movies/popular`
+          'http://localhost:5000/api/movies/popular'
         );
+        setPopularMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
+        console.log(response.data);
         setPopularMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
       } catch (error) {
         console.error("Error fetching popular movies:", error);
@@ -31,8 +34,10 @@ const Home = () => {
       setLoadingRecent(true);  // Set loading jadi true saat mulai fetch data recent
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/movies/recent`
+          // `http://localhost:5000/api/movies/recent`
+          'http://localhost:5000/api/movies/recent'
         );
+        setRecentMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
         setRecentMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
       } catch (error) {
         console.error("Error fetching recent movies:", error);

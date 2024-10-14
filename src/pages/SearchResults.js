@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Grid, Typography, Card, CardMedia, CardContent, Button, Box, Pagination, CircularProgress } from '@mui/material';
+import {Typography, Card, CardMedia, CardContent, Button, Box, Pagination, CircularProgress } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 
 const SearchResults = () => {
@@ -21,8 +21,8 @@ const SearchResults = () => {
       setLoadingMovies(true);
       try {
         const movieResponse = await axios.get(
-          `https://api.themoviedb.org/3/search/movie?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&query=${query}&page=${moviePage}`
-        );
+          `http://localhost:5000/api/movies/search?query=${query}&page=${moviePage}`
+        );        
         setMovies(movieResponse.data.results.slice(0, 10));  // Batasi hasil ke 10 movie
         setMovieTotalPages(movieResponse.data.total_pages);
       } catch (error) {
@@ -39,18 +39,22 @@ const SearchResults = () => {
       setLoadingActors(true);
       try {
         const actorResponse = await axios.get(
-          `https://api.themoviedb.org/3/search/person?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&query=${query}&page=${actorPage}`
+          `http://localhost:5000/api/casts/search?query=${query}`
         );
-        setActors(actorResponse.data.results.slice(0, 10));  // Batasi hasil ke 10 actor
-        setActorTotalPages(actorResponse.data.total_pages);
+        // Karena aktor ada di dalam array 'cast' dari objek Cast, kita harus memetakan array cast ini
+        const actorsData = actorResponse.data.flatMap(castObj => castObj.cast); 
+        setActors(actorsData.slice(0, 10));  // Batasi hasil ke 10 actor
+        setActorTotalPages(1);  // Jika tidak ada pagination, kita set total pages menjadi 1
       } catch (error) {
         console.error('Error fetching actor results:', error);
       } finally {
         setLoadingActors(false);
       }
     };
+  
     if (query) fetchActorResults();
   }, [query, actorPage]);
+  
 
   const handleMoviePageChange = (event, value) => {
     setMoviePage(value);
@@ -136,40 +140,40 @@ const SearchResults = () => {
             Actors
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center' }}>
-            {actors.map((actor) => (
-              <Box key={actor.id} sx={{
-                flexGrow: 1,        
-                minWidth: '200px',  
-                maxWidth: '250px',  
-                margin: '10px',    
-              }}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#1c1c1c', color: '#fff', borderRadius: '8px' }}>
-                  <CardMedia
-                    component="img"
-                    image={actor.profile_path ? `https://image.tmdb.org/t/p/w500${actor.profile_path}` : 'https://via.placeholder.com/500x750?text=No+Image'}
-                    alt={actor.name}
-                    sx={{ height: 350, objectFit: 'cover' }}
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h6" component="div" sx={{ color: 'white' }}>
-                      {actor.name}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'white' }}>
-                      Known for: {actor.known_for.map(movie => movie.title || movie.name).join(', ')}
-                    </Typography>
-                  </CardContent>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    component={Link}
-                    to={`/actor/${actor.id}`}
-                    sx={{ width: '100%', marginTop: 'auto' }}
-                  >
-                    View Details
-                  </Button>
-                </Card>
-              </Box>
-            ))}
+          {actors.map((actor) => (
+            <Box key={actor.id} sx={{
+              flexGrow: 1,
+              minWidth: '200px',
+              maxWidth: '250px',
+              margin: '10px',
+            }}>
+              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#1c1c1c', color: '#fff', borderRadius: '8px' }}>
+                <CardMedia
+                  component="img"
+                  image={actor.profile_path ? `https://image.tmdb.org/t/p/w500${actor.profile_path}` : 'https://via.placeholder.com/500x750?text=No+Image'}
+                  alt={actor.name}
+                  sx={{ height: 350, objectFit: 'cover' }}
+                />
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="h6" component="div" sx={{ color: 'white' }}>
+                    {actor.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'white' }}>
+                    Character: {actor.character}
+                  </Typography>
+                </CardContent>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  component={Link}
+                  to={`/actor/${actor.id}`}
+                  sx={{ width: '100%', marginTop: 'auto' }}
+                >
+                  View Details
+                </Button>
+              </Card>
+            </Box>
+          ))}
           </Box>
 
           <Box display="flex" justifyContent="center" mt={4}>

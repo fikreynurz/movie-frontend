@@ -87,7 +87,7 @@ const Detail = () => {
             <Card>
               <CardMedia
                 component="img"
-                image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                image={`http://image.tmdb.org/t/p/w500${movie.poster_path}`}
                 alt={movie.title}
               />
             </Card>
@@ -145,11 +145,11 @@ const Detail = () => {
 
             {/* Tambahkan Negara Produksi */}
             <Typography variant="body1" gutterBottom>
-              <strong>Production Countries:</strong> {movie.production_countries.map((country) => country.english_name).join(', ')}
+              <strong>Production Countries:</strong> {(movie.production_countries || []).map((country) => country.english_name).join(', ') || 'Unknown'}
             </Typography>
 
             <Typography variant="body1" gutterBottom>
-              <strong>Genres:</strong> {genre.map((genre) => genre.name).join(', ')}
+              <strong>Genres:</strong> {(genre || []).map((g) => g.name).join(', ') || 'Unknown'}
             </Typography>
 
             <Typography variant="body1" paragraph>
@@ -171,17 +171,17 @@ const Detail = () => {
               Cast
             </Typography>
             <Grid container spacing={2}>
-              {(showMoreCast ? cast : cast.slice(0, 5)).map((actor) => (
-                <Grid item key={actor.id} xs={12} sm={6} md={4}>
+              {(showMoreCast ? (cast || []).slice(0, 5) : cast.slice(0, 5)).map((actor) => (
+                <Grid item key={actor?.id} xs={12} sm={6} md={4}>
                   <Box display="flex" alignItems="center">
                     <Avatar
-                      alt={actor.name}
-                      src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
+                      alt={actor?.name}
+                      src={actor?.profile_path ? `https://image.tmdb.org/t/p/w200${actor.profile_path}` : 'https://via.placeholder.com/56'}
                       sx={{ width: 56, height: 56, marginRight: 2 }}
                     />
                     <div>
-                      <Typography variant="body1">{actor.name}</Typography>
-                      <Typography variant="body2" color="textSecondary">{actor.character}</Typography>
+                      <Typography variant="body1">{actor?.name || 'Unknown'}</Typography>
+                      <Typography variant="body2" color="textSecondary">{actor?.character || 'Unknown Character'}</Typography>
                     </div>
                   </Box>
                 </Grid>

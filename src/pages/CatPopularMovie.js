@@ -15,9 +15,9 @@ const CatPopularMovie = () => {
       setLoadingPopular(true);  // Set loading jadi true saat mulai fetch data popular
       try {
         const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/popular?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&page=${currentPage}`
+          `http://localhost:5000/api/movies/popular`
         );
-        setPopularMovies(response.data.results); // Tampilkan semua film
+        setPopularMovies(response.data); // Tampilkan semua film
         setTotalPages(response.data.total_pages); // Simpan total halaman dari API
       } catch (error) {
         console.error("Error fetching popular movies:", error);
