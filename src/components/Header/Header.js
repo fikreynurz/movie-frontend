@@ -90,10 +90,8 @@ const Header = () => {
           JAKRIE
         </Typography>
 
-        {/* Tampilkan search dan FilterModal jika role bukan admin */}
         {role !== 'admin' && (
           <>
-            {/* Input Search dengan Autocomplete */}
             <Autocomplete
               freeSolo
               options={suggestions.map((option) =>

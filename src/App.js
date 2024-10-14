@@ -14,6 +14,7 @@ import UserAddAdmin from './components/AdminPage/User/AddUser'
 import UserEditAdmin from './components/AdminPage/User/EditUser'
 import GenreList from './components/AdminPage/Genre/GenreList';
 import ReviewList from './components/AdminPage/Review/ReviewList';
+import MovieList from './components/AdminPage/Movie/MovieList';
 import RecentMovie from './pages/CatRecentMovie';
 import PopularMovie from './pages/CatPopularMovie';
 
@@ -41,9 +42,11 @@ function App() {
           <Route path="/admin/genre" element={<GenreList/>} />
           
           <Route path="/admin/review" element={<ReviewList/>} />
+
+          <Route path="/admin/movie" element={<MovieList/>} />
         </Routes>
       </GlobalWrapper>
-      <Footer />  {/* Footer tetap di bawah */}
+      <Footer />
       {console.log("Routing to:", window.location.pathname)}
     </Router>
   );

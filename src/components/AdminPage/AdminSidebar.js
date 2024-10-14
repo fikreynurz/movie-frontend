@@ -17,7 +17,7 @@ const AdminSidebar = () => {
 
   const menuItems = [
     { text: "User", icon: <PersonIcon />, path: "/admin/userlist" },
-    { text: "Film", icon: <MovieIcon />, path: "/admin/film" },
+    { text: "Film", icon: <MovieIcon />, path: "/admin/movie" },
     { text: "Cast", icon: <GroupIcon />, path: "/admin/cast" },
     { text: "Review", icon: <RateReviewIcon />, path: "/admin/review" },
     { text: "Genre", icon: <CategoryIcon />, path: "/admin/genre" },
