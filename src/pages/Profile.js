@@ -14,14 +14,15 @@ const Profile = () => {
 
   // Fungsi ini akan fetch data dari API (sesuaikan dengan backend Anda)
   useEffect(() => {
+    setUser(userParsed)
     if (!userLoggedIn) {
       navigate('/')
     }
     const fetchUserData = async () => {
       try {
         // Ganti dengan API Anda untuk mendapatkan data favorit dan ulasan pengguna
-        const favoriteResponse = await axios.get(`/api/user/favorites`);
-        const reviewsResponse = await axios.get(`/api/user/reviews`);
+        const favoriteResponse = await axios.get(`/api/users/favorites`);
+        const reviewsResponse = await axios.get(`/api/users/reviews`);
         setFavorites(favoriteResponse.data);  // Simpan data favorit
         setReviews(reviewsResponse.data);  // Simpan data ulasan
       } catch (error) {

@@ -39,7 +39,7 @@ const Detail = () => {
     const date = new Date(dateString);
     if (isNaN(date)) return 'Unknown date';
     
-    return format(date, 'PPP');
+    return format(date, 'PPP'); // Formats the date as 'April 27th, 2024'
   };
 
   // Cek status login dan ambil data pengguna dari localStorage
@@ -85,6 +85,52 @@ const Detail = () => {
     fetchMovieDetails();
   }, [id]);
 
+  const handleAddToFavorites = async () => {
+    if (!user) {
+      setSnackbar({ open: true, message: 'Please log in to add to favorites.', severity: 'error' });
+      return;
+    }
+
+    try {
+      const response = await axios.put(`http://localhost:5000/api/users/${user.uid}/favorite-movie`, {
+        movie_id: id // Mengirimkan ID film yang ingin ditambahkan ke favorit
+      });
+      console.log(user.uid)
+
+      if (response.status === 200) {
+        setSnackbar({ open: true, message: 'Added to favorites!', severity: 'success' });
+        setIsFavorite(true); // Update state isFavorite
+      } else {
+        setSnackbar({ open: true, message: 'Failed to add to favorites.', severity: 'error' });
+      }
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+      setSnackbar({ open: true, message: 'An error occurred while adding to favorites.', severity: 'error' });
+    }
+  };
+
+  // Fungsi untuk menangani penghapusan film dari favorit
+  const handleRemoveFromFavorites = async () => {
+    if (!user) {
+      setSnackbar({ open: true, message: 'Please log in to remove from favorites.', severity: 'error' });
+      return;
+    }
+
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/users/${user.uid}/favorite-movie/${id}`); // Ganti dengan endpoint yang sesuai
+
+      if (response.status === 200) {
+        setSnackbar({ open: true, message: 'Removed from favorites!', severity: 'success' });
+        setIsFavorite(false); // Update state isFavorite
+      } else {
+        setSnackbar({ open: true, message: 'Failed to remove from favorites.', severity: 'error' });
+      }
+    } catch (error) {
+      console.error("Error removing from favorites:", error);
+      setSnackbar({ open: true, message: 'An error occurred while removing from favorites.', severity: 'error' });
+    }
+  };
+
   // Fungsi untuk menangani submit review
   const handleSubmitReview = async () => {
     if ((!user && !authorName.trim()) || !userRating || !comment.trim()) {
@@ -109,6 +155,7 @@ const Detail = () => {
       content: comment,
       rating: scaledRating, // Menambahkan rating ke review
       url: null, // Jika ada URL ulasan
+      created_at: new Date().toISOString()
     };
 
     try {
@@ -172,17 +219,7 @@ const Detail = () => {
             <Button
               variant="contained"
               color={isFavorite ? 'secondary' : 'primary'}
-              onClick={() => {
-                if (isFavorite) {
-                  // Implementasi penghapusan favorit
-                  console.log('Removing from favorites:', movie.title);
-                } else {
-                  // Implementasi penambahan favorit
-                  console.log('Adding to favorites:', movie.title);
-                }
-                setIsFavorite(!isFavorite);
-              }}
-              sx={{ mb: 2 }}
+              onClick={isFavorite ? handleRemoveFromFavorites : handleAddToFavorites}
             >
               {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
             </Button>
