@@ -22,9 +22,11 @@ import AdminRoute from './components/AdminRoute'; // Pastikan import AdminRoute
 
 function App() {
   return (
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
     <Router>
       <Header /> 
       <GlobalWrapper> 
+        <div style={{ flex : 1 }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/movie/:id" element={<Detail />} />
@@ -46,10 +48,12 @@ function App() {
             <Route path="movie" element={<MovieList />} />
           </Route>
         </Routes>
+        </div>
       </GlobalWrapper>
       <Footer />
       {console.log("Routing to:", window.location.pathname)}
     </Router>
+    </div>
   );
 }
 
