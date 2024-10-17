@@ -1,36 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Grid, Card, CardMedia, CardContent, Avatar, Box, Button, Divider } from '@mui/material';
+import { Container, Typography, Box, CircularProgress, Button, Avatar } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Jika Anda menggunakan backend untuk mengambil data favorit dan ulasan
+import axios from 'axios';
+import Movie from '../components/Movie/Movie';
 
 const Profile = () => {
-  const userLoggedIn = localStorage.getItem("user")
-  const userParsed = JSON.parse(userLoggedIn)
-  const userName = userParsed.name
-  const [favorites, setFavorites] = useState([]);  // State untuk daftar film favorit
-  const [reviews, setReviews] = useState([]);  // State untuk ulasan pengguna
-  const [user, setUser] = useState({ name: userName.toUpperCase(), profilePic: 'https://via.placeholder.com/150' });  // Mock data pengguna
-  const navigate = useNavigate()
+  const userLoggedIn = localStorage.getItem("user");
+  const userParsed = JSON.parse(userLoggedIn);
+  const userName = userParsed.name;
+  const [favorites, setFavorites] = useState([]);
+  const [loadingFavorites, setLoadingFavorites] = useState(true); // Loading state untuk daftar film favorit
+  const [user, setUser] = useState({ name: userName.toUpperCase(), profilePic: 'https://via.placeholder.com/150' });
+  const navigate = useNavigate();
 
-  // Fungsi ini akan fetch data dari API (sesuaikan dengan backend Anda)
   useEffect(() => {
-    setUser(userParsed)
+    setUser(userParsed);
     if (!userLoggedIn) {
-      navigate('/')
+      navigate('/');
     }
-    const fetchUserData = async () => {
+    
+    const fetchFavoriteMovies = async () => {
+      setLoadingFavorites(true); // Set loading true saat mulai fetch data favorite
       try {
-        // Ganti dengan API Anda untuk mendapatkan data favorit dan ulasan pengguna
-        const favoriteResponse = await axios.get(`/api/users/favorites`);
-        const reviewsResponse = await axios.get(`/api/users/reviews`);
-        setFavorites(favoriteResponse.data);  // Simpan data favorit
-        setReviews(reviewsResponse.data);  // Simpan data ulasan
+        const response = await axios.get(`http://localhost:5000/api/users/${userParsed.uid}/favorite-movies`);
+        setFavorites(response.data);  // Simpan data favorit ke state
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching favorite movies:", error);
+      } finally {
+        setLoadingFavorites(false); // Set loading false setelah selesai fetch data
       }
     };
 
-    fetchUserData();
+    fetchFavoriteMovies();
   }, []);
 
   return (
@@ -46,72 +47,31 @@ const Profile = () => {
           <Typography variant="h4">{user.name}</Typography>
         </Box>
 
-        <Divider sx={{ my: 4 }} />
-
         {/* Section Daftar Favorit */}
         <Typography variant="h5" gutterBottom>
           Favorite Movies
         </Typography>
-        {favorites.length > 0 ? (
-          <Grid container spacing={4}>
-            {favorites.map((movie) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={movie.id}>
-                <Card sx={{ display: 'flex', flexDirection: 'column', backgroundColor: '#1c1c1c', color: '#fff', borderRadius: '8px' }}>
-                  <CardMedia
-                    component="img"
-                    image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                    alt={movie.title}
-                    sx={{ height: 350, objectFit: 'cover' }}
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h6" component="div" sx={{ color: 'white' }}>
-                      {movie.title}
-                    </Typography>
-                  </CardContent>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    component={Link}
-                    to={`/movie/${movie.id}`}
-                    sx={{ width: '100%', marginTop: 'auto' }}
-                  >
-                    View Details
-                  </Button>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+
+        {loadingFavorites ? (
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <CircularProgress />
+          </Box>
+        ) : favorites.length > 0 ? (
+          <>
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              {favorites.map((movie) => (
+                <Movie key={movie.id} movies={[movie]} />
+              ))}
+            </Box>
+            {/* Tombol "View More" jika ingin menambah pagination atau daftar panjang
+            <Box display="flex" justifyContent="flex-end" mt={2}>
+              <Button component={Link} to="/favorites" variant="contained" color="primary">
+                View More
+              </Button>
+            </Box> */}
+          </>
         ) : (
           <Typography>No favorite movies found.</Typography>
-        )}
-
-        <Divider sx={{ my: 4 }} />
-
-        {/* Section Ulasan Pengguna */}
-        <Typography variant="h5" gutterBottom>
-          Your Reviews
-        </Typography>
-        {reviews.length > 0 ? (
-          reviews.map((review) => (
-            <Box key={review.id} my={2} p={2} border="1px solid #ddd" borderRadius="8px">
-              <Typography variant="body1" gutterBottom>
-                <strong>{review.movie_title}</strong> — {review.created_at}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" paragraph>
-                {review.content}
-              </Typography>
-              <Button
-                variant="text"
-                color="primary"
-                component={Link}
-                to={`/movie/${review.movie_id}`}
-              >
-                View Movie
-              </Button>
-            </Box>
-          ))
-        ) : (
-          <Typography>No reviews found.</Typography>
         )}
       </Box>
     </Container>
