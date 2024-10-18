@@ -1,5 +1,7 @@
 // src/App.js
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import darkTheme from './theme';
 import Home from './pages/Home';
 import Detail from './pages/Detail';
 import Header from './components/Header/Header';
@@ -22,6 +24,8 @@ import AdminRoute from './components/AdminRoute'; // Pastikan import AdminRoute
 
 function App() {
   return (
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
     <Router>
       <Header /> 
@@ -54,6 +58,7 @@ function App() {
       {console.log("Routing to:", window.location.pathname)}
     </Router>
     </div>
+    </ThemeProvider>
   );
 }
 
