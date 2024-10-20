@@ -14,35 +14,30 @@ const Home = () => {
   // Fetch Popular and Recent movies dari API TMDB
   useEffect(() => {
     const fetchPopularMovies = async () => {
-      setLoadingPopular(true);  // Set loading jadi true saat mulai fetch data popular
+      setLoadingPopular(true);  // Set loading to true when fetching starts
       try {
         const response = await axios.get(
-          // `http://localhost:5000/api/movies/popular`
-          'http://localhost:5000/api/movies/popular'
+          `http://localhost:5000/api/movies/popular?page=1&limit=5`  // Fetch first 5 popular movies
         );
-        setPopularMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
-        console.log(response.data);
-        setPopularMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
+        setPopularMovies(response.data.results);  // Set the limited results
       } catch (error) {
         console.error("Error fetching popular movies:", error);
       } finally {
-        setLoadingPopular(false);  // Set loading jadi false setelah fetch data selesai
+        setLoadingPopular(false);  // Set loading to false after data is fetched
       }
     };
 
     const fetchRecentMovies = async () => {
-      setLoadingRecent(true);  // Set loading jadi true saat mulai fetch data recent
+      setLoadingRecent(true);
       try {
         const response = await axios.get(
-          // `http://localhost:5000/api/movies/recent`
-          'http://localhost:5000/api/movies/recent'
+          `http://localhost:5000/api/movies/recent?page=1&limit=5`  // Adjust for recent movies pagination
         );
-        setRecentMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
-        setRecentMovies(response.data.slice(0, 5)); // Batasi jumlah film menjadi 5
+        setRecentMovies(response.data.results);
       } catch (error) {
         console.error("Error fetching recent movies:", error);
       } finally {
-        setLoadingRecent(false);  // Set loading jadi false setelah fetch data selesai
+        setLoadingRecent(false);
       }
     };
 

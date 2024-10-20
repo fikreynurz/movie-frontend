@@ -5,33 +5,32 @@ import axios from 'axios';
 
 const CatPopularMovie = () => {
   const [popularMovies, setPopularMovies] = useState([]);
-  const [loadingPopular, setLoadingPopular] = useState(true);  // Loading state untuk popular movies
-  const [currentPage, setCurrentPage] = useState(1);  // Tambahkan state untuk halaman saat ini
-  const [totalPages, setTotalPages] = useState(1);    // Tambahkan state untuk total halaman
+  const [loadingPopular, setLoadingPopular] = useState(true);  
+  const [currentPage, setCurrentPage] = useState(1);  // State for current page
+  const [totalPages, setTotalPages] = useState(1);    // State for total pages
 
-  // Fetch popular movies berdasarkan halaman
   useEffect(() => {
     const fetchPopularMovies = async () => {
-      setLoadingPopular(true);  // Set loading jadi true saat mulai fetch data popular
+      setLoadingPopular(true);  // Set loading to true when fetching starts
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/movies/popular`
+          `http://localhost:5000/api/movies/popular?page=${currentPage}&limit=10`  // Send page and limit
         );
-        setPopularMovies(response.data); // Tampilkan semua film
-        setTotalPages(response.data.total_pages); // Simpan total halaman dari API
+        setPopularMovies(response.data.results);
+        setTotalPages(response.data.total_pages);  // Set total pages based on response
       } catch (error) {
         console.error("Error fetching popular movies:", error);
       } finally {
-        setLoadingPopular(false);  // Set loading jadi false setelah fetch data selesai
+        setLoadingPopular(false);  // Set loading to false after data is fetched
       }
     };
 
     fetchPopularMovies();
-  }, [currentPage]);  // Refetch data ketika halaman berubah
+  }, [currentPage]);  // Refetch when the page changes
 
-  // Fungsi untuk mengubah halaman
+  // Function to handle page change
   const handlePageChange = (event, value) => {
-    setCurrentPage(value);  // Update halaman saat ini
+    setCurrentPage(value);  // Update the current page
   };
 
   return (
@@ -50,22 +49,22 @@ const CatPopularMovie = () => {
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center' }}>
               {popularMovies.map((movie) => (
                 <Box key={movie.id} sx={{
-                  flexGrow: 1,        // Membiarkan box mengambil ruang yang tersedia
-                  minWidth: '200px',   // Ukuran minimal box
-                  maxWidth: '250px',   // Ukuran maksimal box
-                  margin: '10px',      // Margin antar box
+                  flexGrow: 1,        
+                  minWidth: '200px',  
+                  maxWidth: '250px',  
+                  margin: '10px',     
                 }}>
                   <Movie movies={[movie]} />
                 </Box>
               ))}
             </Box>
 
-            {/* Pagination */}
+            {/* Pagination component */}
             <Box display="flex" justifyContent="center" mt={4}>
-              <Pagination 
-                count={totalPages}         // Total halaman
-                page={currentPage}         // Halaman saat ini
-                onChange={handlePageChange}  // Fungsi ketika halaman diubah
+              <Pagination
+                count={totalPages}        // Total pages
+                page={currentPage}        // Current page
+                onChange={handlePageChange}  // Handle page change
                 color="primary"
                 size="large"
               />

@@ -5,34 +5,33 @@ import axios from 'axios';
 
 const CatRecentMovie = () => {
   const [recentMovies, setRecentMovies] = useState([]);
-  const [loadingRecent, setLoadingRecent] = useState(true);  // Loading state untuk recent movies
-  const [currentPage, setCurrentPage] = useState(1);  // Tambahkan state untuk halaman saat ini
-  const [totalPages, setTotalPages] = useState(1);    // Tambahkan state untuk total halaman
+  const [loadingRecent, setLoadingRecent] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);  // State for current page
+  const [totalPages, setTotalPages] = useState(1);    // State for total pages
 
-  // Fetch recent movies berdasarkan halaman
+  // Fetch recent movies with pagination
   useEffect(() => {
     const fetchRecentMovies = async () => {
-      setLoadingRecent(true);  // Set loading jadi true saat mulai fetch data recent
+      setLoadingRecent(true);  // Set loading state to true when fetching
       try {
         const response = await axios.get(
-          // `https://api.themoviedb.org/3/movie/now_playing?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US&page=${currentPage}`
-          'http://localhost:5000/api/movies/recent'
+          `http://localhost:5000/api/movies/recent?page=${currentPage}&limit=10`  // Fetch movies by page
         );
-        setRecentMovies(response.data); // Tampilkan semua film
-        setTotalPages(response.data.total_pages); // Simpan total halaman dari API
+        setRecentMovies(response.data.results);  // Store movies
+        setTotalPages(response.data.total_pages);  // Store total pages
       } catch (error) {
         console.error("Error fetching recent movies:", error);
       } finally {
-        setLoadingRecent(false);  // Set loading jadi false setelah fetch data selesai
+        setLoadingRecent(false);  // Stop loading after fetching
       }
     };
 
     fetchRecentMovies();
-  }, [currentPage]);  // Refetch data ketika halaman berubah
+  }, [currentPage]);  // Fetch new data whenever current page changes
 
-  // Fungsi untuk mengubah halaman
+  // Handle page change event
   const handlePageChange = (event, value) => {
-    setCurrentPage(value);  // Update halaman saat ini
+    setCurrentPage(value);  // Update current page state
   };
 
   return (
@@ -51,22 +50,22 @@ const CatRecentMovie = () => {
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center' }}>
               {recentMovies.map((movie) => (
                 <Box key={movie.id} sx={{
-                  flexGrow: 1,        // Membiarkan box mengambil ruang yang tersedia
-                  minWidth: '200px',   // Ukuran minimal box
-                  maxWidth: '250px',   // Ukuran maksimal box
-                  margin: '10px',      // Margin antar box
+                  flexGrow: 1,        
+                  minWidth: '200px',   
+                  maxWidth: '250px',  
+                  margin: '10px',      
                 }}>
                   <Movie movies={[movie]} />
                 </Box>
               ))}
             </Box>
 
-            {/* Pagination */}
+            {/* Pagination for recent movies */}
             <Box display="flex" justifyContent="center" mt={4}>
               <Pagination 
-                count={totalPages}         // Total halaman
-                page={currentPage}         // Halaman saat ini
-                onChange={handlePageChange}  // Fungsi ketika halaman diubah
+                count={totalPages}         // Total number of pages
+                page={currentPage}         // Current page
+                onChange={handlePageChange}  // Handle page change
                 color="primary"
                 size="large"
               />

@@ -24,7 +24,7 @@ const Header = () => {
       setRole(userParsed.role);
       setName(userParsed.name);
     }
-  }, [user]);
+  }, [user, userParsed.name, userParsed.role]);  // Menyertakan ketergantungan yang diperlukan  
 
   const handleLogin = () => {
     navigate('/login');
@@ -92,44 +92,55 @@ const Header = () => {
 
         {role !== 'admin' && (
           <>
-            <Autocomplete
-              freeSolo
-              options={suggestions.map((option) =>
-                option.title ? option.title : option.name
-              )}
-              onInputChange={handleInputChange}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Search Movies or Actors"
-                  variant="outlined"
-                  size="small"
-                  value={searchQuery}
-                  onKeyDown={handleKeyDown}
-                  sx={{
-                    backgroundColor: 'white',
-                    borderRadius: '4px',
-                    marginRight: '10px',
-                    '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                        borderColor: 'white',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: '#1976d2',
-                      },
+          <Autocomplete
+            freeSolo
+            options={suggestions.map((option) =>
+              option.title ? option.title : option.name
+            )}
+            onInputChange={handleInputChange}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search Movies or Actors"
+                variant="outlined"
+                size="small"
+                value={searchQuery}
+                onKeyDown={handleKeyDown}
+                sx={{
+                  backgroundColor: '#121212', // Match dark theme background
+                  borderRadius: '4px',
+                  marginRight: '10px',
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#2196f3', // Blue border
                     },
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              )}
-            />
-
+                    '&:hover fieldset': {
+                      borderColor: '#1976d2', // Darker blue on hover
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#1976d2', // Darker blue when focused
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#90caf9', // Light blue for label
+                  },
+                  '& .MuiInputBase-input': {
+                    color: '#fff', // White text inside input
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: '#90caf9', // Light blue for search icon
+                  },
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          />
             <FilterModal />
           </>
         )}

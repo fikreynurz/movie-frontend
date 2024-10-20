@@ -1,36 +1,31 @@
-// src/theme.js
 import { createTheme } from '@mui/material/styles';
 
-const darkTheme = createTheme({
+const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#e50914', // Netflix's signature red color for primary elements
+      main: '#0d47a1', // Dark Blue color for primary
     },
     secondary: {
-      main: '#ffffff', // White for secondary elements
+      main: '#2196f3', // Lighter blue for secondary elements
     },
     background: {
-      default: '#141414', // Netflix's background color (dark grey)
-      paper: '#1c1c1c', // Slightly lighter grey for cards, paper components
+      default: '#121212', // Dark mode background
+      paper: '#1d1d1d',   // Slightly lighter background for cards, etc.
     },
     text: {
-      primary: '#ffffff', // White text
-      secondary: '#b3b3b3', // Grey text for secondary elements
+      primary: '#ffffff', // White text for better contrast
+      secondary: '#90caf9', // Light blue for secondary text
+    },
+    action: {
+      hover: '#1e88e5', // Dark blue hover effect
     },
   },
   typography: {
-    fontFamily: 'Roboto, Arial, sans-serif',
-    h4: {
-      fontWeight: 700,
-    },
-    h5: {
-      fontWeight: 500,
-    },
-    h6: {
-      fontWeight: 400,
+    button: {
+      textTransform: 'none',
     },
   },
 });
 
-export default darkTheme;
+export default theme;
