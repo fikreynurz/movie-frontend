@@ -31,7 +31,7 @@ const Header = () => {
       setRole(userParsed.role);
       setName(userParsed.name);
     }
-  }, []);  // Tidak perlu user atau userParsed di dependency array
+  }, [user]);  // Tidak perlu user atau userParsed di dependency array
   
 
   const handleLogin = () => {
