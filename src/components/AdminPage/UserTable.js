@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { 
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, 
   Button, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, 
-  DialogTitle, TextField 
+  DialogTitle, TextField, Select, MenuItem, FormControl, InputLabel 
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import axios from 'axios';
+import AdminSidebar from './AdminSidebar';
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -14,8 +15,8 @@ const UserTable = () => {
   const [currentUser, setCurrentUser] = useState({
     name: '',
     email: '',
-    role: '',
-    password: '', // Tambahkan password ke state
+    role: '', // Role is now handled as a dropdown
+    password: '',
     id: '',
   });
 
@@ -76,6 +77,7 @@ const UserTable = () => {
 
   return (
     <div>
+      <AdminSidebar/>
       <Button variant="contained" color="primary" onClick={() => handleOpen()}>
         Add User
       </Button>
@@ -135,15 +137,18 @@ const UserTable = () => {
             value={currentUser.email}
             onChange={handleChange}
           />
-          <TextField
-            margin="dense"
-            name="role"
-            label="Role"
-            type="text"
-            fullWidth
-            value={currentUser.role}
-            onChange={handleChange}
-          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Role</InputLabel>
+            <Select
+              name="role"
+              value={currentUser.role}
+              onChange={handleChange}
+              label="Role"
+            >
+              <MenuItem value="user">User</MenuItem>
+              <MenuItem value="admin">Admin</MenuItem>
+            </Select>
+          </FormControl>
           <TextField
             margin="dense"
             name="password"
