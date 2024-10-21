@@ -16,7 +16,6 @@ const Header = () => {
   const [suggestions, setSuggestions] = useState([]);
   const navigate = useNavigate();
   const user = localStorage.getItem("user")
-  const userParsed = JSON.parse(user)
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -31,7 +30,7 @@ const Header = () => {
       setRole(userParsed.role);
       setName(userParsed.name);
     }
-  }, []);  // Tidak perlu user atau userParsed di dependency array
+  }, [user]);  // Tidak perlu user atau userParsed di dependency array
   
 
   const handleLogin = () => {

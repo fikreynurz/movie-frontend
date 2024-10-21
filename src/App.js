@@ -1,4 +1,3 @@
-// src/App.js
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import darkTheme from './theme';
@@ -29,8 +28,8 @@ function App() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
     <Router>
       <Header /> 
-      <GlobalWrapper> 
-        <div style={{ flex : 1 }}>
+      <GlobalWrapper style={{ flexGrow: 1 }}> 
+        <div>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/movie/:id" element={<Detail />} />
