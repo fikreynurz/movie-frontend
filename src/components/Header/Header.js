@@ -19,12 +19,20 @@ const Header = () => {
   const userParsed = JSON.parse(user)
 
   useEffect(() => {
+    const user = localStorage.getItem("user");
+    let userParsed = null;
+  
     if (user) {
+      userParsed = JSON.parse(user);
+    }
+  
+    if (userParsed) {  // Cek apakah userParsed tidak null
       setIsLoggedIn(true);
       setRole(userParsed.role);
       setName(userParsed.name);
     }
-  }, [user, userParsed.name, userParsed.role]);  // Menyertakan ketergantungan yang diperlukan  
+  }, []);  // Tidak perlu user atau userParsed di dependency array
+  
 
   const handleLogin = () => {
     navigate('/login');
