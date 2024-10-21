@@ -1,8 +1,8 @@
 // src/components/AdminRoute.js
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
-const AdminRoute = ({ children }) => {
+const AdminRoute = () => {
   // Ambil data pengguna dari localStorage
   const storedUser = localStorage.getItem('user');
   let user = null;
@@ -17,7 +17,7 @@ const AdminRoute = ({ children }) => {
 
   // Periksa apakah pengguna ada dan memiliki peran 'admin'
   if (user && user.role === 'admin') {
-    return children;
+    return <Outlet />;  // Gantikan dengan Outlet untuk child routes
   } else {
     // Jika tidak, arahkan pengguna ke halaman utama atau halaman yang diinginkan
     return <Navigate to="/" replace />;

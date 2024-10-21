@@ -11,15 +11,13 @@ import FilterResults from './pages/FilterResults';
 import Profile from './pages/Profile';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
-import UserListAdmin from './components/AdminPage/User/UserList';
-import UserAddAdmin from './components/AdminPage/User/AddUser';
-import UserEditAdmin from './components/AdminPage/User/EditUser';
 import GenreList from './components/AdminPage/Genre/GenreList';
 import ReviewList from './components/AdminPage/Review/ReviewList';
 import MovieList from './components/AdminPage/Movie/MovieList';
 import RecentMovie from './pages/CatRecentMovie';
 import PopularMovie from './pages/CatPopularMovie';
 import AdminRoute from './components/AdminRoute'; // Pastikan import AdminRoute
+import UserTable from './components/AdminPage/UserTable'
 
 function App() {
   return (
@@ -43,12 +41,10 @@ function App() {
 
           {/* Parent Route Admin yang Dilindungi */}
           <Route path="/admin" element={<AdminRoute />}>
-            <Route path="userlist" element={<UserListAdmin />} />
-            <Route path="useradd" element={<UserAddAdmin />} />
-            <Route path="useredit/:_id" element={<UserEditAdmin />} />
             <Route path="genre" element={<GenreList />} />
             <Route path="review" element={<ReviewList />} />
             <Route path="movie" element={<MovieList />} />
+            <Route path="user" element={<UserTable />} />
           </Route>
         </Routes>
         </div>
