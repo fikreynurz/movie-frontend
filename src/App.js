@@ -18,14 +18,33 @@ import RecentMovie from './pages/CatRecentMovie';
 import PopularMovie from './pages/CatPopularMovie';
 import AdminRoute from './components/AdminRoute'; // Pastikan import AdminRoute
 import UserTable from './components/AdminPage/UserTable'
+import {initStarscape} from './starscapeAnimation';
+import { useEffect } from 'react';
 
 function App() {
+  useEffect(() => {
+    const cleanup = initStarscape();
+    return () => cleanup && cleanup();
+  }, []);
+  
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <canvas
+          id="stars"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: '-1',
+            pointerEvents: 'none' // Membuatnya tidak mengganggu interaksi di atasnya
+          }}
+        ></canvas>
     <Router>
-      <Header /> 
+      <Header/> 
       <GlobalWrapper style={{ flexGrow: 1 }}> 
         <div>
         <Routes>
@@ -56,5 +75,6 @@ function App() {
     </ThemeProvider>
   );
 }
+
 
 export default App;

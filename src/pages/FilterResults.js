@@ -18,7 +18,7 @@ const FilterResults = () => {
     const fetchFilteredMovies = async () => {
       setLoading(true);  // Set loading to true before fetching data
   
-      let url = `http://localhost:5000/api/movies/filter?`;
+      let url = `http://localhost:5000/api/movies/filter?page=${page}`;  // Kirim `page` sebagai query
 
       // Kirim filter sebagai query parameters
       if (year) {
@@ -39,8 +39,14 @@ const FilterResults = () => {
   
       try {
         const response = await axios.get(url);
-        setFilteredMovies(response.data);  // Ambil data dari API
-        setTotalPages(1);  // Set total halaman (jika diperlukan)
+        
+        // Pastikan data `results` dan `total_pages` ada
+        if (response.data && response.data.results) {
+          setFilteredMovies(response.data.results);  // Ambil hasil film yang difilter
+          setTotalPages(response.data.total_pages || 1);  // Perbarui total halaman dari respons API
+        } else {
+          setFilteredMovies([]);  // Set data menjadi kosong jika tidak ada hasil
+        }
       } catch (error) {
         console.error("Error fetching filtered movies", error);
       } finally {
