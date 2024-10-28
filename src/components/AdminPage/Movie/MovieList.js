@@ -74,7 +74,7 @@ const MovieList = () => {
   return (
     <>
       <AdminSidebar />
-      <Box sx={{ margin: "auto", width: "90%", padding: 2 }}>
+      <Box sx={{ margin: "auto", width: "95%", padding: 2 }}> {/* Adjusted width to 95% */}
         <FormControl variant="outlined" sx={{ minWidth: 120, marginRight: 2 }}>
           <InputLabel id="status-label">Filter by Status</InputLabel>
           <Select
@@ -102,7 +102,7 @@ const MovieList = () => {
         component={Paper}
         sx={{
           margin: "auto",
-          width: "90%",
+          width: "95%", // Consistent width across the page
           boxShadow: 3,
           borderRadius: 2,
         }}
@@ -110,12 +110,12 @@ const MovieList = () => {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#1976d2", color: "#fff" }}>
-              <TableCell sx={{ color: "#fff" }}><strong>Title</strong></TableCell>
-              <TableCell sx={{ color: "#fff" }}><strong>Casts</strong></TableCell>
-              <TableCell sx={{ color: "#fff" }}><strong>Genres</strong></TableCell>
-              <TableCell sx={{ color: "#fff" }}><strong>Synopsis</strong></TableCell>
-              <TableCell sx={{ color: "#fff" }}><strong>Status</strong></TableCell>
-              <TableCell sx={{ color: "#fff" }}><strong>Action</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '13%' }}><strong>Title</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '10%' }}><strong>Casts</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '10%' }}><strong>Genres</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '40%' }}><strong>Synopsis</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '5%' }}><strong>Status</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '5%' }}><strong>Action</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
