@@ -48,7 +48,7 @@ const RecentMovie = ({ limit }) => {
           >
             <CardMedia
               component="img"
-              image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              image={`http://localhost:5000/api/movies/poster/${movie.id}`}
               alt={movie.title}
               sx={{ height: 350, objectFit: 'cover' }}
             />
