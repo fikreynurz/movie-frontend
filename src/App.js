@@ -13,7 +13,7 @@ import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import GenreList from './components/AdminPage/Genre/GenreList';
 import ReviewList from './components/AdminPage/Review/ReviewList';
-import MovieList from './components/AdminPage/Movie/MovieList';
+import MovieTable from './components/AdminPage/MovieTable';
 import RecentMovie from './pages/CatRecentMovie';
 import PopularMovie from './pages/CatPopularMovie';
 import AdminRoute from './components/AdminRoute'; // Pastikan import AdminRoute
@@ -62,7 +62,7 @@ function App() {
           <Route path="/admin" element={<AdminRoute />}>
             <Route path="genre" element={<GenreList />} />
             <Route path="review" element={<ReviewList />} />
-            <Route path="movie" element={<MovieList />} />
+            <Route path="movie" element={<MovieTable />} />
             <Route path="user" element={<UserTable />} />
           </Route>
         </Routes>

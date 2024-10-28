@@ -26,7 +26,7 @@ const RecentCarousel = () => {
           <Carousel.Item key={movie.id}>
             <img
               className="d-block w-100"
-              src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}  
+              src={`http://localhost:5000/api/movies/backdrop/${movie.id}`}  
               alt={movie.title}
               style={{
                 height: '500px',       // Atur tinggi gambar

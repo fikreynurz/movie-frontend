@@ -203,7 +203,7 @@ const Detail = () => {
             <Card>
               <CardMedia
                 component="img"
-                image={`http://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                image={`http://localhost:5000/api/movies/poster/${movie.id}`}
                 alt={movie.title}
               />
             </Card>

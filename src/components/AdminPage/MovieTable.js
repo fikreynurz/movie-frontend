@@ -16,18 +16,38 @@ import {
   InputLabel,
   FormControl,
   Box,
+  Modal,
+  Button,
 } from "@mui/material";
-import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { Edit as EditIcon, Delete as DeleteIcon, CloudUpload as CloudUploadIcon } from "@mui/icons-material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import AdminSidebar from "../AdminSidebar";
+import AdminSidebar from "./AdminSidebar";
 
-const MovieList = () => {
+const MovieTable = () => {
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(15); // Menentukan jumlah movie per halaman
   const [statusFilter, setStatusFilter] = useState(""); // Status filter
   const [searchQuery, setSearchQuery] = useState(""); // Search query
+  const [openModal, setOpenModal] = useState(false); // Kontrol modal
+  const [newMovie, setNewMovie] = useState({
+    title: "",
+    adult: false,
+    backdrop_path: null,
+    poster_path: null,
+    genre_ids: [],
+    original_language: "",
+    original_title: "",
+    overview: "",
+    popularity: 0,
+    release_date: "",
+    vote_average: 0,
+    vote_count: 0,
+    category: [],
+    production_countries: [],
+  });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,6 +76,40 @@ const MovieList = () => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+  };
+
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewMovie((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setNewMovie((prev) => ({ ...prev, [name]: files[0] })); // Set file yang diupload
+  };
+
+  const handleAddMovie = async () => {
+    const formData = new FormData();
+    Object.keys(newMovie).forEach((key) => {
+      if (key === "backdrop_path" || key === "poster_path") {
+        formData.append(key, newMovie[key]);
+      } else {
+        formData.append(key, JSON.stringify(newMovie[key]));
+      }
+    });
+
+    try {
+      await axios.post("http://localhost:5000/api/movies", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      fetchMovies(); // Refresh data setelah tambah movie
+      handleCloseModal(); // Tutup modal
+    } catch (error) {
+      console.error("Error adding movie:", error);
+    }
   };
 
   // Calculate movies to be displayed on the current page
@@ -96,6 +150,10 @@ const MovieList = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           sx={{ flexGrow: 1 }}
         />
+
+        <Button variant="contained" color="primary" onClick={handleOpenModal} sx={{ marginLeft: 2 }}>
+          Add Movie
+        </Button>
       </Box>
 
       <TableContainer
@@ -184,8 +242,96 @@ const MovieList = () => {
           onPageChange={handleChangePage}
         />
       </TableContainer>
+
+      {/* Modal for Adding New Movie */}
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Box sx={{ p: 4, backgroundColor: "white", maxWidth: 600, margin: "auto", mt: "10%" }}>
+          <Typography variant="h6" gutterBottom>
+            Add New Movie
+          </Typography>
+
+          <TextField
+            label="Title"
+            name="title"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={newMovie.title}
+            onChange={handleInputChange}
+          />
+
+          <TextField
+            label="Original Title"
+            name="original_title"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={newMovie.original_title}
+            onChange={handleInputChange}
+          />
+
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Backdrop Image</InputLabel>
+            <Button
+              variant="contained"
+              component="label"
+              startIcon={<CloudUploadIcon />}
+            >
+              Upload
+              <input
+                type="file"
+                name="backdrop_path"
+                hidden
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+            </Button>
+          </FormControl>
+
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Poster Image</InputLabel>
+            <Button
+              variant="contained"
+              component="label"
+              startIcon={<CloudUploadIcon />}
+            >
+              Upload
+              <input
+                type="file"
+                name="poster_path"
+                hidden
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+            </Button>
+          </FormControl>
+
+          <TextField
+            label="Overview"
+            name="overview"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            multiline
+            rows={3}
+            value={newMovie.overview}
+            onChange={handleInputChange}
+          />
+
+          {/* Additional fields for genre_ids, production_countries, etc. */}
+
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+            <Button variant="contained" color="primary" onClick={handleAddMovie}>
+              Submit
+            </Button>
+            <Button onClick={handleCloseModal} sx={{ ml: 2 }}>
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </>
   );
 };
 
-export default MovieList;
+export default MovieTable;
