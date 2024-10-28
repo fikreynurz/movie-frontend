@@ -14,9 +14,10 @@ import {
   TablePagination,
   IconButton,
 } from "@mui/material";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider} from "@mui/material/styles";
 import AdminSidebar from "../AdminSidebar";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import DarkTheme from "../../../theme";
 
 const GenreList = () => {
   const [genres, setGenres] = useState([]);
@@ -56,16 +57,9 @@ const GenreList = () => {
     setPage(0); // Reset to first page when rows per page changes
   };
 
-  const theme = createTheme({
-    typography: {
-      fontFamily: "Sans, Arial, sans-serif",
-      fontWeight: "bold",
-    },
-  });
-
   return (
     <>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={DarkTheme}>
         <CssBaseline />
         <AdminSidebar />
         <Container maxWidth="lg" style={{ marginTop: "50px" }}>

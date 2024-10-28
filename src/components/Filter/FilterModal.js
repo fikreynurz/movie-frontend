@@ -56,13 +56,24 @@ const FilterModal = () => {
     );
   };
 
-  // Function untuk apply filter
   const handleApply = () => {
-    if (selectedGenres.length > 0 || year || rating || selectedCountry) {
-      navigate('/filter-results', { state: { year, rating, genres: selectedGenres, country: selectedCountry } });
+    const ratingValue = rating ? (rating * 2) : 0; // Mengkonversi bintang ke skala 1-10
+
+    if (selectedGenres.length > 0 || year || ratingValue || selectedCountry) {
+      navigate('/filter-results', { 
+        state: { 
+          year, 
+          rating: ratingValue,  // Kirim nilai yang sudah dikonversi
+          genres: selectedGenres, 
+          country: selectedCountry 
+        } 
+      });
     }
     handleClose();
   };
+
+
+  
 
   return (
     <>

@@ -12,9 +12,9 @@ import {
   Box,
   ThemeProvider,
   CssBaseline,
-  createTheme,
 } from "@mui/material";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import DarkTheme from "../../theme";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -68,16 +68,9 @@ const Login = () => {
     }
   };
 
-  const theme = createTheme({
-    typography: {
-      fontFamily: "Sans, Arial, sans-serif",
-      fontWeight: "bold",
-    },
-  });
-
   return (
     <>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={DarkTheme}>
         <CssBaseline />
         <Container
           component="main"

@@ -24,6 +24,8 @@ const theme = createTheme({
   typography: {
     button: {
       textTransform: 'none',
+      fontFamily: "Sans, Arial, sans-serif",
+      fontWeight: "bold",
     },
   },
 });

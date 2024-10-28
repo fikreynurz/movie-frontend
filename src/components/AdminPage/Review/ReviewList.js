@@ -26,7 +26,8 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SearchIcon from "@mui/icons-material/Search";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider} from "@mui/material/styles";
+import DarkTheme from "../../../theme";
 
 const ReviewList = () => {
   const [reviews, setReviews] = useState([]);
@@ -158,16 +159,9 @@ const ReviewList = () => {
     }
   };
 
-  const theme = createTheme({
-    typography: {
-      fontFamily: "Sans, Arial, sans-serif",
-      fontWeight: "bold",
-    },
-  });
-
   return (
     <>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={DarkTheme}>
         <CssBaseline />
         <Container maxWidth="lg" style={{ marginTop: "50px" }}>
           <Typography variant="h4" align="center" gutterBottom>
