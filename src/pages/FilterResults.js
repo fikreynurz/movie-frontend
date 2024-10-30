@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+//import axios from 'axios';
 import {Typography, Card, CardMedia, CardContent, Button, Box, Pagination, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
+import api from '../components/Api';
 
 const FilterResults = () => {
   const location = useLocation();
@@ -16,43 +17,23 @@ const FilterResults = () => {
 
   useEffect(() => {
     const fetchFilteredMovies = async () => {
-      setLoading(true);  // Set loading to true before fetching data
-  
-      let url = `http://localhost:5000/api/movies/filter?page=${page}`;  // Kirim `page` sebagai query
-
-      // Kirim filter sebagai query parameters
-      if (year) {
-        url += `&year=${year}`;
-      }
-  
-      if (rating) {
-        url += `&rating=${rating}`;
-      }
-  
-      if (genres && genres.length > 0) {
-        url += `&genres=${genres.join(',')}`;
-      }
-  
-      if (country) {
-        url += `&country=${country}`;
-      }
+      setLoading(true);
+      let url = `/movies/filter?page=${page}`;
+      if (year) url += `&year=${year}`;
+      if (rating) url += `&rating=${rating}`;
+      if (genres) url += `&genres=${genres.join(',')}`;
+      if (country) url += `&country=${country}`;
   
       try {
-        const response = await axios.get(url);
-        
-        // Pastikan data `results` dan `total_pages` ada
-        if (response.data && response.data.results) {
-          setFilteredMovies(response.data.results);  // Ambil hasil film yang difilter
-          setTotalPages(response.data.total_pages || 1);  // Perbarui total halaman dari respons API
-        } else {
-          setFilteredMovies([]);  // Set data menjadi kosong jika tidak ada hasil
-        }
+          const response = await api.get(url);
+          setFilteredMovies(response.data.results);
+          setTotalPages(response.data.total_pages);
       } catch (error) {
-        console.error("Error fetching filtered movies", error);
+          console.error("Error fetching filtered movies:", error);
       } finally {
-        setLoading(false);  // Set loading to false setelah data di-fetch
+          setLoading(false);
       }
-    };
+  };
   
     fetchFilteredMovies();
   }, [year, rating, genres, country, page]);  // Add `page` as a dependency to refetch data when the page changes

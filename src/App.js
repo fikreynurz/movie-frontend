@@ -18,6 +18,7 @@ import RecentMovie from './pages/CatRecentMovie';
 import PopularMovie from './pages/CatPopularMovie';
 import AdminRoute from './components/AdminRoute'; // Pastikan import AdminRoute
 import UserTable from './components/AdminPage/UserTable'
+import CastTable from './components/AdminPage/Cast/CastTable';
 import {initStarscape} from './starscapeAnimation';
 import { useEffect } from 'react';
 
@@ -64,6 +65,7 @@ function App() {
             <Route path="review" element={<ReviewList />} />
             <Route path="movie" element={<MovieTable />} />
             <Route path="user" element={<UserTable />} />
+            <Route path="cast" element={<CastTable/>} />
           </Route>
         </Routes>
         </div>

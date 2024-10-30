@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Box, Typography, CircularProgress, Pagination } from '@mui/material';
 import Movie from '../components/Movie/Movie';
-import axios from 'axios';
+//import axios from 'axios';
+import api from '../components/Api';
 
 const CatPopularMovie = () => {
   const [popularMovies, setPopularMovies] = useState([]);
@@ -11,19 +12,17 @@ const CatPopularMovie = () => {
 
   useEffect(() => {
     const fetchPopularMovies = async () => {
-      setLoadingPopular(true);  // Set loading to true when fetching starts
+      setLoadingPopular(true);
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/movies/popular?page=${currentPage}&limit=10`  // Send page and limit
-        );
-        setPopularMovies(response.data.results);
-        setTotalPages(response.data.total_pages);  // Set total pages based on response
+          const response = await api.get(`/movies/popular?page=${currentPage}&limit=10`);
+          setPopularMovies(response.data.results);
+          setTotalPages(response.data.total_pages);
       } catch (error) {
-        console.error("Error fetching popular movies:", error);
+          console.error("Error fetching popular movies:", error);
       } finally {
-        setLoadingPopular(false);  // Set loading to false after data is fetched
+          setLoadingPopular(false);
       }
-    };
+  };
 
     fetchPopularMovies();
   }, [currentPage]);  // Refetch when the page changes

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Box, CircularProgress, Button, Avatar } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { Container, Typography, Box, CircularProgress, Avatar } from '@mui/material';
+import {  useNavigate } from 'react-router-dom';
+//import axios from 'axios';
 import Movie from '../components/Movie/Movie';
+import api from '../components/Api';
 
 const Profile = () => {
   const userLoggedIn = localStorage.getItem("user");
@@ -22,7 +23,7 @@ const Profile = () => {
     const fetchFavoriteMovies = async () => {
       setLoadingFavorites(true); // Set loading true saat mulai fetch data favorite
       try {
-        const response = await axios.get(`http://localhost:5000/api/users/${userParsed.uid}/favorite-movies`);
+        const response = await api.get(`/users/${userParsed.uid}/favorite-movies`);
         setFavorites(response.data);  // Simpan data favorit ke state
       } catch (error) {
         console.error("Error fetching favorite movies:", error);

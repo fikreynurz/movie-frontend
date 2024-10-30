@@ -8,6 +8,7 @@ import {
   Snackbar, Alert 
 } from '@mui/material';
 import { format } from 'date-fns'; // Untuk memformat tanggal
+import api from '../components/Api';
 
 const Detail = () => {
   const { id } = useParams();  // Mengambil ID dari URL
@@ -63,7 +64,7 @@ const Detail = () => {
     const fetchMovieDetails = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:5000/api/movies/append/${id}`);
+        const response = await api.get(`/movies/append/${id}`);
         setMovie(response.data.movie);
         setReviews(response.data.review ? response.data.review.reviews : []);
 
@@ -92,7 +93,7 @@ const Detail = () => {
     }
 
     try {
-      const response = await axios.put(`http://localhost:5000/api/users/${user.uid}/favorite-movie`, {
+      const response = await api.put(`/users/${user.uid}/favorite-movie`, {
         movie_id: id // Mengirimkan ID film yang ingin ditambahkan ke favorit
       });
       console.log(user.uid)
@@ -117,7 +118,7 @@ const Detail = () => {
     }
 
     try {
-      const response = await axios.delete(`http://localhost:5000/api/users/${user.uid}/favorite-movie/${id}`); // Ganti dengan endpoint yang sesuai
+      const response = await api.delete(`/users/${user.uid}/favorite-movie/${id}`); // Ganti dengan endpoint yang sesuai
 
       if (response.status === 200) {
         setSnackbar({ open: true, message: 'Removed from favorites!', severity: 'success' });

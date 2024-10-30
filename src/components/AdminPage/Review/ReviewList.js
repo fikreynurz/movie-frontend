@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   Container,
-  Button,
   Typography,
   TextField,
-  Grid,
-  Checkbox,
   IconButton,
   Table,
   TableBody,
@@ -15,19 +11,15 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  CssBaseline,
   TablePagination,
+  Box,
+  Checkbox,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SearchIcon from "@mui/icons-material/Search";
-import { ThemeProvider} from "@mui/material/styles";
-import DarkTheme from "../../../theme";
+import api from "../../Api";
+import AdminSidebar from "../AdminSidebar";
 
 const ReviewList = () => {
   const [reviews, setReviews] = useState([]);
@@ -36,28 +28,16 @@ const ReviewList = () => {
   const [searchFilmId, setSearchFilmId] = useState("");
   const [selectedReviews, setSelectedReviews] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [selectedReview, setSelectedReview] = useState(null);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     const getReviews = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/reviews");
-
-        const allReviews = [];
-        response.data.forEach((movie) => {
-          if (movie && movie.reviews) {
-            const reviewsWithFilmId = movie.reviews.map((review) => ({
-              ...review,
-              movie_id: movie.movie_id,  // Attach movie_id to each review
-            }));
-            allReviews.push(...reviewsWithFilmId);
-          }
-        });
-
+        const response = await api.get("/reviews");
+        const allReviews = response.data.flatMap(movie =>
+          movie.reviews.map(review => ({ ...review, movie_id: movie.movie_id }))
+        );
         setReviews(allReviews);
         setFilteredReviews(allReviews);
       } catch (error) {
@@ -72,14 +52,14 @@ const ReviewList = () => {
 
     if (searchQuery) {
       filtered = filtered.filter(
-        (review) =>
+        review =>
           review.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
           review.content.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     if (searchFilmId) {
-      filtered = filtered.filter((review) =>
+      filtered = filtered.filter(review =>
         review.movie_id.toString().includes(searchFilmId)
       );
     }
@@ -101,47 +81,6 @@ const ReviewList = () => {
     setPage(0);
   };
 
-  const handleDelete = (id) => {
-    setSelectedReviews([id]);
-    setShowDeleteModal(true);
-  };
-
-  const confirmDelete = async () => {
-    try {
-      await Promise.all(
-        selectedReviews.map(async (reviewId) => {
-          await axios.delete(`http://localhost:5000/api/reviews/${reviewId}`);
-        })
-      );
-      setReviews(
-        reviews.filter((review) => !selectedReviews.includes(review.id))
-      );
-      setSelectAll(false);
-      setSelectedReviews([]);
-    } catch (error) {
-      if (error.response && error.response.data.msg) {
-        alert(error.response.data.msg);
-      }
-    } finally {
-      setShowDeleteModal(false);
-    }
-  };
-
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-    setSelectedReviews([]);
-  };
-
-  const handleShowDetails = (review) => {
-    setSelectedReview(review);
-    setShowDetailModal(true);
-  };
-
-  const closeDetailModal = () => {
-    setShowDetailModal(false);
-    setSelectedReview(null);
-  };
-
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedReviews([]);
@@ -161,200 +100,105 @@ const ReviewList = () => {
 
   return (
     <>
-      <ThemeProvider theme={DarkTheme}>
-        <CssBaseline />
-        <Container maxWidth="lg" style={{ marginTop: "50px" }}>
-          <Typography variant="h4" align="center" gutterBottom>
-            Review List
-          </Typography>
+      <AdminSidebar />
+      <Container maxWidth="50px" style={{ marginTop: "50px" }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Review List
+        </Typography>
+        <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
+          <TextField
+            label="Search by Author or Content"
+            variant="outlined"
+            fullWidth
+            InputProps={{ endAdornment: <SearchIcon /> }}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <TextField
+            label="Search by Film ID"
+            variant="outlined"
+            fullWidth
+            InputProps={{ endAdornment: <SearchIcon /> }}
+            value={searchFilmId}
+            onChange={(e) => setSearchFilmId(e.target.value)}
+          />
+        </Box>
 
-          <Grid container spacing={2} style={{ marginBottom: "20px" }}>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                label="Search by Author or Content"
-                variant="outlined"
-                fullWidth
-                InputProps={{
-                  endAdornment: <SearchIcon />,
-                }}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                label="Search by Film ID"
-                variant="outlined"
-                fullWidth
-                InputProps={{
-                  endAdornment: <SearchIcon />,
-                }}
-                value={searchFilmId}
-                onChange={(e) => setSearchFilmId(e.target.value)}
-              />
-            </Grid>
-          </Grid>
-
-          {selectedReviews.length > 0 && (
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => setShowDeleteModal(true)}
-              style={{ marginBottom: "20px" }}
-            >
-              Delete Selected Reviews
-            </Button>
-          )}
-
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
+        <TableContainer
+          component={Paper}
+          sx={{
+            margin: "auto",
+            width: "95%",
+            boxShadow: 3,
+            borderRadius: 2,
+          }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "#1976d2", color: "#fff" }}>
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectAll}
+                    onChange={handleSelectAll}
+                    color="primary"
+                  />
+                </TableCell>
+                <TableCell sx={{ color: "#fff", width: '20%' }}><strong>Film ID</strong></TableCell>
+                <TableCell sx={{ color: "#fff", width: '20%' }}><strong>Author</strong></TableCell>
+                <TableCell sx={{ color: "#fff", width: '40%' }}><strong>Content</strong></TableCell>
+                <TableCell sx={{ color: "#fff", width: '20%', textAlign: "center" }}><strong>Actions</strong></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paginatedReviews.length === 0 ? (
                 <TableRow>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selectAll}
-                      onChange={handleSelectAll}
-                      color="primary"
-                    />
+                  <TableCell colSpan={5} align="center">
+                    No reviews found
                   </TableCell>
-                  <TableCell>Film ID</TableCell>
-                  <TableCell>Author</TableCell>
-                  <TableCell>Content</TableCell>
-                  <TableCell align="center">Actions</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedReviews.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} align="center">
-                      No reviews found
+              ) : (
+                paginatedReviews.map((review) => (
+                  <TableRow key={review.id} hover>
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={selectedReviews.includes(review.id)}
+                        onChange={() => handleSelectReview(review.id)}
+                        color="primary"
+                      />
+                    </TableCell>
+                    <TableCell>{review.movie_id}</TableCell>
+                    <TableCell>{review.author}</TableCell>
+                    <TableCell>
+                      {review.content.length > 100
+                        ? `${review.content.substring(0, 100)}...`
+                        : review.content}
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconButton color="info">
+                        <VisibilityIcon />
+                      </IconButton>
+                      <IconButton color="error">
+                        <DeleteIcon />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
-                ) : (
-                  paginatedReviews.map((review) => (
-                    <TableRow key={review.id}>
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={selectedReviews.includes(review.id)}
-                          onChange={() => handleSelectReview(review.id)}
-                          color="primary"
-                        />
-                      </TableCell>
-                      <TableCell>{review.movie_id}</TableCell>
-                      <TableCell>{review.author}</TableCell>
-                      <TableCell>
-                        {review.content.length > 100
-                          ? `${review.content.substring(0, 100)}...`
-                          : review.content}
-                      </TableCell>
-                      <TableCell align="center">
-                        <IconButton
-                          color="info"
-                          onClick={() => handleShowDetails(review)}
-                        >
-                          <VisibilityIcon />
-                        </IconButton>
-                        <IconButton
-                          color="error"
-                          onClick={() => handleDelete(review.id)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={filteredReviews.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </TableContainer>
-
-          {/* Detail Modal */}
-          <Dialog open={showDetailModal} onClose={closeDetailModal}>
-            <DialogTitle>Review Details</DialogTitle>
-            <DialogContent>
-              {selectedReview && (
-                <>
-                  {selectedReview.author_details.avatar_path && (
-                    <DialogContentText>
-                      <strong>Avatar:</strong>{" "}
-                      <img
-                        src={`https://image.tmdb.org/t/p/w200${selectedReview.author_details.avatar_path}`}
-                        alt="Avatar"
-                        style={{
-                          width: "100px",
-                          height: "auto",
-                          borderRadius: "50%",
-                        }}
-                      />
-                    </DialogContentText>
-                  )}
-                  <DialogContentText>
-                    <strong>Author:</strong> {selectedReview.author}
-                  </DialogContentText>
-                  <DialogContentText>
-                    <strong>Content:</strong> {selectedReview.content}
-                  </DialogContentText>
-                  <DialogContentText>
-                    <strong>Rating:</strong>{" "}
-                    {selectedReview.author_details.rating || "N/A"}
-                  </DialogContentText>
-                  <DialogContentText>
-                    <strong>Created At:</strong>{" "}
-                    {new Date(selectedReview.created_at).toLocaleDateString()}
-                  </DialogContentText>
-                  <DialogContentText>
-                    <strong>URL:</strong>{" "}
-                    <a
-                      href={selectedReview.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {selectedReview.url}
-                    </a>
-                  </DialogContentText>
-                </>
+                ))
               )}
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={closeDetailModal} color="primary">
-                Close
-              </Button>
-            </DialogActions>
-          </Dialog>
-
-          {/* Delete Confirmation Modal */}
-          <Dialog
-            open={showDeleteModal}
-            onClose={() => setShowDeleteModal(false)}
-          >
-            <DialogTitle>Confirm Delete</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Are you sure you want to delete the selected reviews?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={cancelDelete} color="primary">
-                Cancel
-              </Button>
-              <Button onClick={confirmDelete} color="error">
-                Delete
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </Container>
-      </ThemeProvider>
+            </TableBody>
+          </Table>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={filteredReviews.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </TableContainer>
+      </Container>
     </>
-  );
-};
+    );
+  };
 
 export default ReviewList;

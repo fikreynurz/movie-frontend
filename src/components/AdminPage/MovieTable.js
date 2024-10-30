@@ -20,9 +20,9 @@ import {
   Button,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon, CloudUpload as CloudUploadIcon } from "@mui/icons-material";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
+import api from "../Api";
 
 const MovieTable = () => {
   const [movies, setMovies] = useState([]);
@@ -56,7 +56,7 @@ const MovieTable = () => {
 
   const fetchMovies = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/movies");
+      const response = await api.get("/movies");
       setMovies(response.data);
     } catch (error) {
       console.error("Error fetching movies:", error);
@@ -66,7 +66,7 @@ const MovieTable = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this movie?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/movies/${id}`);
+        await api.delete(`/movies/${id}`);
         fetchMovies(); // Refresh the movie list after delete
       } catch (error) {
         console.error("Error deleting movie:", error);
@@ -102,7 +102,7 @@ const MovieTable = () => {
     });
 
     try {
-      await axios.post("http://localhost:5000/api/movies", formData, {
+      await api.post("/movies", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       fetchMovies(); // Refresh data setelah tambah movie

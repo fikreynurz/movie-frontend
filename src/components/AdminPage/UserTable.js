@@ -5,9 +5,10 @@ import {
   DialogTitle, TextField, Select, MenuItem, FormControl, InputLabel, Box, Typography
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
-import axios from 'axios';
+//import axios from 'axios';
 import AdminSidebar from './AdminSidebar';
 import { Button } from '@mui/material';
+import api from '../Api';
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -28,7 +29,7 @@ const UserTable = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/users');
+      const response = await api.get('/users');
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -37,7 +38,7 @@ const UserTable = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/users/${id}`);
+      await api.delete(`/users/${id}`);
       fetchUsers(); // Refresh user list after deletion
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -59,10 +60,10 @@ const UserTable = () => {
     try {
       if (editMode) {
         // Update user
-        await axios.put(`http://localhost:5000/api/users/${currentUser._id}`, currentUser);
+        await api.put(`/users/${currentUser._id}`, currentUser);
       } else {
         // Add new user
-        await axios.post('http://localhost:5000/api/users/register', currentUser);
+        await api.post('/users/register', currentUser);
       }
       fetchUsers(); // Refresh user list after submission
       handleClose();
