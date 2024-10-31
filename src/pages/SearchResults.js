@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {Typography, Card, CardMedia, CardContent, Button, Box, Pagination, CircularProgress } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
+import api from "../components/Api"
 
 const SearchResults = () => {
   const location = useLocation();
@@ -20,9 +21,7 @@ const SearchResults = () => {
     const fetchMovieResults = async () => {
       setLoadingMovies(true);
       try {
-        const movieResponse = await axios.get(
-          `http://localhost:5000/api/movies/search?query=${query}&page=${moviePage}`
-        );        
+        const movieResponse = await api.get(`/movies/search?query=${query}&page=${moviePage}`);       
         setMovies(movieResponse.data.results.slice(0, 10));  // Batasi hasil ke 10 movie
         setMovieTotalPages(movieResponse.data.total_pages);
       } catch (error) {
@@ -38,9 +37,7 @@ const SearchResults = () => {
     const fetchActorResults = async () => {
       setLoadingActors(true);
       try {
-        const actorResponse = await axios.get(
-          `http://localhost:5000/api/casts/search?query=${query}`
-        );
+        const actorResponse = await api.get(`/casts/search?query=${query}`);
         // Karena aktor ada di dalam array 'cast' dari objek Cast, kita harus memetakan array cast ini
         const actorsData = actorResponse.data.flatMap(castObj => castObj.cast); 
         setActors(actorsData.slice(0, 10));  // Batasi hasil ke 10 actor

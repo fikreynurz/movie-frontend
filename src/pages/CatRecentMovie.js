@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Box, Typography, CircularProgress, Pagination } from '@mui/material';
 import Movie from '../components/Movie/Movie';
-import axios from 'axios';
+//import axios from 'axios';
+import api from '../components/Api';
 
 const CatRecentMovie = () => {
   const [recentMovies, setRecentMovies] = useState([]);
@@ -12,19 +13,17 @@ const CatRecentMovie = () => {
   // Fetch recent movies with pagination
   useEffect(() => {
     const fetchRecentMovies = async () => {
-      setLoadingRecent(true);  // Set loading state to true when fetching
+      setLoadingRecent(true);
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/movies/recent?page=${currentPage}&limit=10`  // Fetch movies by page
-        );
-        setRecentMovies(response.data.results);  // Store movies
-        setTotalPages(response.data.total_pages);  // Store total pages
+          const response = await api.get(`/movies/recent?page=${currentPage}&limit=10`);
+          setRecentMovies(response.data.results);
+          setTotalPages(response.data.total_pages);
       } catch (error) {
-        console.error("Error fetching recent movies:", error);
+          console.error("Error fetching recent movies:", error);
       } finally {
-        setLoadingRecent(false);  // Stop loading after fetching
+          setLoadingRecent(false);
       }
-    };
+  };
 
     fetchRecentMovies();
   }, [currentPage]);  // Fetch new data whenever current page changes

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+//import axios from 'axios';
 import Carousel from 'react-bootstrap/Carousel';  // Menggunakan Carousel dari React Bootstrap
 import { Container } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import api from '../Api';
 
 const RecentCarousel = () => {
   const [movies, setMovies] = useState([]);
@@ -10,7 +11,7 @@ const RecentCarousel = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/movies/upcoming`);
+        const response = await api.get(`/movies/upcoming`);
         setMovies(response.data);  // Ambil array 'results' dari respons API
       } catch (error) {
         console.error("Error fetching the recent movies", error);

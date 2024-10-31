@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Container, Box, Typography, CircularProgress, Button } from '@mui/material';
 import Movie from '../components/Movie/Movie';
 import RecentCarousel from '../components/Carousel/Carousel';
-import axios from 'axios';
+//import axios from 'axios';
 import { Link } from 'react-router-dom';  // Tambahkan Link dari react-router-dom
-
+import api
+ from '../components/Api';
 const Home = () => {
   const [popularMovies, setPopularMovies] = useState([]);
   const [recentMovies, setRecentMovies] = useState([]);
@@ -16,9 +17,7 @@ const Home = () => {
     const fetchPopularMovies = async () => {
       setLoadingPopular(true);  // Set loading to true when fetching starts
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/movies/popular?page=1&limit=5`  // Fetch first 5 popular movies
-        );
+        const response = await api.get("/movies/popular?page=1&limit=5");
         setPopularMovies(response.data.results);  // Set the limited results
       } catch (error) {
         console.error("Error fetching popular movies:", error);
@@ -30,9 +29,7 @@ const Home = () => {
     const fetchRecentMovies = async () => {
       setLoadingRecent(true);
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/movies/recent?page=1&limit=5`  // Adjust for recent movies pagination
-        );
+        const response = await api.get("/movies/recent?page=1&limit=5");
         setRecentMovies(response.data.results);
       } catch (error) {
         console.error("Error fetching recent movies:", error);

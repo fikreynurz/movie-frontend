@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Modal, Box, Typography, Checkbox, FormControlLabel, Grid, MenuItem, Rating, TextField } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';  // Tambahkan useNavigate untuk routing
+import api from '../Api';
 
 const FilterModal = () => {
   const [open, setOpen] = useState(false);
@@ -20,9 +21,9 @@ const FilterModal = () => {
   useEffect(() => {
     const fetchGenres = async () => {
       try {
-        const response = await axios.get(
+        const response = await api.get(
           // `https://api.themoviedb.org/3/genre/movie/list?api_key=ac18a0e6818325589a5c34b35da509ab&language=en-US`
-          `http://localhost:5000/api/genres`
+          `/genres`
         );
         setGenres(response.data.genres);
       } catch (error) {
@@ -36,9 +37,9 @@ const FilterModal = () => {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await axios.get(
+        const response = await api.get(
           // `https://api.themoviedb.org/3/configuration/countries?api_key=ac18a0e6818325589a5c34b35da509ab`
-          `http://localhost:5000/api/countries`
+          `/countries`
         );
         setCountries(response.data);
       } catch (error) {

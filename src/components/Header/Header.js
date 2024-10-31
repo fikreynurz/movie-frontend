@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, IconButton, Avatar, TextField, InputAdornment, Autocomplete } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+//import axios from 'axios';
 import SearchIcon from '@mui/icons-material/Search';
 import logo from '../../assets/images/logo.png';
 import FilterModal from '../Filter/FilterModal';
+import api from '../Api';
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -39,6 +40,7 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
     setAnchorEl(null);
     setRole('');
@@ -69,16 +71,14 @@ const Header = () => {
   const handleInputChange = async (event, value) => {
     setSearchQuery(value);
     if (value) {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/api/movies/search?query=${value}`
-        );
-        setSuggestions(response.data.results);
-      } catch (error) {
-        console.error("Error fetching autocomplete suggestions:", error);
-      }
+        try {
+            const response = await api.get(`/movies/search?query=${value}`);
+            setSuggestions(response.data.results);
+        } catch (error) {
+            console.error("Error fetching autocomplete suggestions:", error);
+        }
     } else {
-      setSuggestions([]);
+        setSuggestions([]);
     }
   };
 

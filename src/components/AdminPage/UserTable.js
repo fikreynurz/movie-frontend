@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { 
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, 
-  Button, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, 
-  DialogTitle, TextField, Select, MenuItem, FormControl, InputLabel 
+  IconButton, Dialog, DialogActions, DialogContent, DialogContentText, 
+  DialogTitle, TextField, Select, MenuItem, FormControl, InputLabel, Box, Typography
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
-import axios from 'axios';
+//import axios from 'axios';
 import AdminSidebar from './AdminSidebar';
+import { Button } from '@mui/material';
+import api from '../Api';
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -15,7 +17,7 @@ const UserTable = () => {
   const [currentUser, setCurrentUser] = useState({
     name: '',
     email: '',
-    role: '', // Role is now handled as a dropdown
+    role: '',
     password: '',
     id: '',
   });
@@ -27,11 +29,15 @@ const UserTable = () => {
 
   const fetchUsers = async () => {
     try {
+<<<<<<< HEAD
       const user = localStorage.getItem("user")
       const userParsed = JSON.parse(user)
       const token = userParsed.token
       console.log(user)
       const response = await axios.get('http://localhost:5000/api/users', {headers: {"Authorization" : `Bearer ${token}`}});
+=======
+      const response = await api.get('/users');
+>>>>>>> 4178658e1533def0c2d1955fef9fb93cb4df2102
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -40,7 +46,7 @@ const UserTable = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/users/${id}`);
+      await api.delete(`/users/${id}`);
       fetchUsers(); // Refresh user list after deletion
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -62,10 +68,10 @@ const UserTable = () => {
     try {
       if (editMode) {
         // Update user
-        await axios.put(`http://localhost:5000/api/users/${currentUser._id}`, currentUser);
+        await api.put(`/users/${currentUser._id}`, currentUser);
       } else {
         // Add new user
-        await axios.post('http://localhost:5000/api/users/register', currentUser);
+        await api.post('/users/register', currentUser);
       }
       fetchUsers(); // Refresh user list after submission
       handleClose();
@@ -81,33 +87,55 @@ const UserTable = () => {
 
   return (
     <div>
-      <AdminSidebar/>
-      <Button variant="contained" color="primary" onClick={() => handleOpen()}>
-        Add User
-      </Button>
-      <TableContainer component={Paper} sx={{ mt: 2 }}>
+      <AdminSidebar />
+      <Box sx={{ margin: "auto", width: "90%", padding: 2 }}>
+        <Typography variant="h4" gutterBottom>User Management</Typography>
+        <Button variant="contained" color="primary" onClick={() => handleOpen()} sx={{ mb: 2 }}>
+          Add User
+        </Button>
+      </Box>
+
+      <TableContainer
+        component={Paper}
+        sx={{
+          margin: "auto",
+          width: "95%",
+          boxShadow: 3,
+          borderRadius: 2,
+        }}
+      >
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Actions</TableCell>
+            <TableRow sx={{ backgroundColor: "#1976d2", color: "#fff" }}>
+              <TableCell sx={{ color: "#fff", width: '20%' }}><strong>Name</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '30%' }}><strong>Email</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '15%' }}><strong>Role</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '5%' }}><strong>Actions</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user._id}>
-                <TableCell>{user.name}</TableCell>
+              <TableRow key={user._id} hover>
+                <TableCell>
+                  <Typography variant="body1" fontWeight="bold">{user.name}</Typography>
+                </TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
                 <TableCell>
-                  <IconButton color="primary" onClick={() => handleOpen(user)}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleOpen(user)}
+                  >
                     <Edit />
                   </IconButton>
-                  <IconButton color="secondary" onClick={() => handleDelete(user._id)}>
+                  <IconButton
+                    color="secondary"
+                    onClick={() => handleDelete(user._id)}
+                  >
                     <Delete />
                   </IconButton>
+                  </Box>
                 </TableCell>
               </TableRow>
             ))}
@@ -157,7 +185,7 @@ const UserTable = () => {
             margin="dense"
             name="password"
             label="Password"
-            type="password" // Set type to password
+            type="password"
             fullWidth
             value={currentUser.password}
             onChange={handleChange}

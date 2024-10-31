@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { TextField, Button, Grid, Typography, Autocomplete } from '@mui/material';
-import axios from 'axios';
+//import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate untuk routing
+import api from '../Api';
 
 const Search = () => {
   const [query, setQuery] = useState('');
@@ -18,8 +19,8 @@ const Search = () => {
     setQuery(value);
     if (value) {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/movies/search?query=${value}`
+        const response = await api.get(
+          `/movies/search?query=${value}`
         );
         console.log(response.data.results);
         setSuggestions(response.data.results);

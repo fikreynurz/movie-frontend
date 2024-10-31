@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import DarkTheme from "../../theme";
+import api from "../Api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -25,46 +26,43 @@ const Login = () => {
   const loginUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        // "http://10.10.131.248:5000/api/users/login",
-        "http://localhost:5000/api/users/login",
-        {
-          email, 
-          password,
+        const response = await api.post("/users/login", {
+            email,
+            password,
+        });
+
+        const data = response.data;
+        localStorage.setItem("token", data.token);  // Simpan token ke localStorage
+        localStorage.setItem("user", JSON.stringify(data));
+
+        if (data.role === "admin") {
+            navigate("/admin/user");
+        } else {
+            navigate("/");
         }
-      );
-
-      const data = response.data;
-      localStorage.setItem("user", JSON.stringify(data));
-
-      if (data.role === "admin") {
-        navigate("/admin/user");
-      } else {
-        navigate("/");
-      }
     } catch (error) {
-      setError("Invalid email or password. Please try again.");
+        setError("Invalid email or password. Please try again.");
     }
-  };
+};
 
   const responseGoogle = async (response) => {
     const { credential } = response;
     try {
-      const res = await axios.post(
-        // "http://10.10.131.248:5000/api/users/auth/google/login",
-        "http://localhost:5000/api/users/auth/google/login",
-        { idToken: credential }
-      );
-      const data = res.data;
-      localStorage.setItem("user", JSON.stringify(data));
+        const res = await axios.post(
+            "http://localhost:5000/api/users/auth/google/login",
+            { idToken: credential }
+        );
+        const data = res.data;
+        localStorage.setItem("token", data.token);  // Simpan token di localStorage
+        localStorage.setItem("user", JSON.stringify(data));
 
-      if (data.role === "admin") {
-        navigate("/admin/user");
-      } else {
-        navigate("/");
-      }
+        if (data.role === "admin") {
+            navigate("/admin/user");
+        } else {
+            navigate("/");
+        }
     } catch (error) {
-      setError("Failed to login with Google. Please try again.");
+        setError("Failed to login with Google. Please try again.");
     }
   };
 

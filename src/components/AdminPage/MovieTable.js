@@ -20,9 +20,9 @@ import {
   Button,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon, CloudUpload as CloudUploadIcon } from "@mui/icons-material";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
+import api from "../Api";
 
 const MovieTable = () => {
   const [movies, setMovies] = useState([]);
@@ -56,7 +56,7 @@ const MovieTable = () => {
 
   const fetchMovies = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/movies");
+      const response = await api.get("/movies");
       setMovies(response.data);
     } catch (error) {
       console.error("Error fetching movies:", error);
@@ -66,7 +66,7 @@ const MovieTable = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this movie?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/movies/${id}`);
+        await api.delete(`/movies/${id}`);
         fetchMovies(); // Refresh the movie list after delete
       } catch (error) {
         console.error("Error deleting movie:", error);
@@ -102,7 +102,7 @@ const MovieTable = () => {
     });
 
     try {
-      await axios.post("http://localhost:5000/api/movies", formData, {
+      await api.post("/movies", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       fetchMovies(); // Refresh data setelah tambah movie
@@ -128,7 +128,7 @@ const MovieTable = () => {
   return (
     <>
       <AdminSidebar />
-      <Box sx={{ margin: "auto", width: "90%", padding: 2 }}>
+      <Box sx={{ margin: "auto", width: "95%", padding: 2 }}> {/* Adjusted width to 95% */}
         <FormControl variant="outlined" sx={{ minWidth: 120, marginRight: 2 }}>
           <InputLabel id="status-label">Filter by Status</InputLabel>
           <Select
@@ -160,7 +160,7 @@ const MovieTable = () => {
         component={Paper}
         sx={{
           margin: "auto",
-          width: "90%",
+          width: "95%", // Consistent width across the page
           boxShadow: 3,
           borderRadius: 2,
         }}
@@ -168,12 +168,12 @@ const MovieTable = () => {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#1976d2", color: "#fff" }}>
-              <TableCell sx={{ color: "#fff" }}><strong>Title</strong></TableCell>
-              <TableCell sx={{ color: "#fff" }}><strong>Casts</strong></TableCell>
-              <TableCell sx={{ color: "#fff" }}><strong>Genres</strong></TableCell>
-              <TableCell sx={{ color: "#fff" }}><strong>Synopsis</strong></TableCell>
-              <TableCell sx={{ color: "#fff" }}><strong>Status</strong></TableCell>
-              <TableCell sx={{ color: "#fff" }}><strong>Action</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '13%' }}><strong>Title</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '10%' }}><strong>Casts</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '10%' }}><strong>Genres</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '40%' }}><strong>Synopsis</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '5%' }}><strong>Status</strong></TableCell>
+              <TableCell sx={{ color: "#fff", width: '5%' }}><strong>Action</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
