@@ -27,7 +27,11 @@ const UserTable = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/users');
+      const user = localStorage.getItem("user")
+      const userParsed = JSON.parse(user)
+      const token = userParsed.token
+      console.log(user)
+      const response = await axios.get('http://localhost:5000/api/users', {headers: {"Authorization" : `Bearer ${token}`}});
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);

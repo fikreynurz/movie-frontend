@@ -203,7 +203,7 @@ const Detail = () => {
             <Card>
               <CardMedia
                 component="img"
-                image={`http://localhost:5000/api/movies/poster/${movie.id}`}
+                image={`http://localhost:5000/api/movies/poster/${id}`}
                 alt={movie.title}
               />
             </Card>
