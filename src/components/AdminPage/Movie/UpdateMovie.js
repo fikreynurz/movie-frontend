@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../../Api';
 
 const UpdateMovie = () => {
   const { id } = useParams();
@@ -12,7 +12,7 @@ const UpdateMovie = () => {
 
   useEffect(() => {
     const fetchMovie = async () => {
-      const response = await axios.get(`/api/movies/${id}`);
+      const response = await api.get(`/movies/${id}`);
       const movie = response.data;
       setTitle(movie.title);
       setReleaseDate(movie.release_date);
@@ -24,7 +24,7 @@ const UpdateMovie = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const updatedMovie = { title, release_date: releaseDate, popularity };
-    await axios.put(`http://localhost:5000/api/movies/${id}`, updatedMovie);
+    await api.put(`/movies/${id}`, updatedMovie);
     navigate('/movies');
   };
 

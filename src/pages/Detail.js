@@ -1,6 +1,6 @@
 // src/components/Detail.js
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+//import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Container, Typography, Grid, Box, Card, CardMedia, Avatar, 
@@ -27,6 +27,7 @@ const Detail = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [user, setUser] = useState(null); // State untuk data pengguna
+  const [backdropUrl, setBackdropUrl] = useState(null);
 
   // Fungsi untuk menutup Snackbar
   const handleCloseSnackbar = () => {
@@ -83,8 +84,25 @@ const Detail = () => {
         setLoading(false);
       }
     };
+
     fetchMovieDetails();
   }, [id]);
+
+  useEffect(() => {
+    const fetchBackdrop = async () => {
+      try {
+        const response = await api.get(`/movies/backdrop/${id}`, {
+          responseType: 'blob', // Fetch as a Blob to use as an image source
+        });
+        const imageUrl = URL.createObjectURL(response.data); // Convert Blob to URL
+        setBackdropUrl(imageUrl); // Set the image URL to state
+      } catch (error) {
+        console.error('Error fetching backdrop:', error);
+      }
+    };
+  
+    fetchBackdrop();
+  }, [id]);  
 
   const handleAddToFavorites = async () => {
     if (!user) {
@@ -160,7 +178,7 @@ const Detail = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/reviews/', newReview);
+      const response = await api.post('/reviews/', newReview);
       if (response.status === 201) {
         setSnackbar({ open: true, message: 'Review added successfully!', severity: 'success' });
         // Reset form
@@ -196,6 +214,24 @@ const Detail = () => {
   }
 
   return (
+    <>
+      {backdropUrl && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: `url(${backdropUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            zIndex: -1,
+            opacity: 0.3, // Adjust transparency
+          }}
+        />
+      )}
+
     <Container maxWidth="lg">
       <Box my={4}>
         <Grid container spacing={4}>
@@ -467,6 +503,7 @@ const Detail = () => {
         </Snackbar>
       </Box>
     </Container>
+    </>
   );
 };
 

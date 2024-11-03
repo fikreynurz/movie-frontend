@@ -27,10 +27,10 @@ import api from "../Api";
 const MovieTable = () => {
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage] = useState(15); // Menentukan jumlah movie per halaman
-  const [statusFilter, setStatusFilter] = useState(""); // Status filter
-  const [searchQuery, setSearchQuery] = useState(""); // Search query
-  const [openModal, setOpenModal] = useState(false); // Kontrol modal
+  const [rowsPerPage] = useState(15);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [openModal, setOpenModal] = useState(false);
   const [newMovie, setNewMovie] = useState({
     title: "",
     adult: false,
@@ -67,7 +67,7 @@ const MovieTable = () => {
     if (window.confirm("Are you sure you want to delete this movie?")) {
       try {
         await api.delete(`/movies/${id}`);
-        fetchMovies(); // Refresh the movie list after delete
+        fetchMovies();
       } catch (error) {
         console.error("Error deleting movie:", error);
       }
@@ -88,7 +88,7 @@ const MovieTable = () => {
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    setNewMovie((prev) => ({ ...prev, [name]: files[0] })); // Set file yang diupload
+    setNewMovie((prev) => ({ ...prev, [name]: files[0] }));
   };
 
   const handleAddMovie = async () => {
@@ -105,30 +105,29 @@ const MovieTable = () => {
       await api.post("/movies", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      fetchMovies(); // Refresh data setelah tambah movie
-      handleCloseModal(); // Tutup modal
+      fetchMovies();
+      handleCloseModal();
     } catch (error) {
       console.error("Error adding movie:", error);
     }
   };
 
-  // Calculate movies to be displayed on the current page
   const displayedMovies = movies
     .filter((movie) => {
       const matchesStatus = statusFilter
-        ? movie.isApproved === statusFilter
-        : true; // Include all if no filter is set
+        ? movie.isApproved === (statusFilter === "Approved")
+        : true;
       const matchesTitle = movie.title
         .toLowerCase()
-        .includes(searchQuery.toLowerCase()); // Filter by title
-      return matchesStatus && matchesTitle; // Return true if both conditions are met
+        .includes(searchQuery.toLowerCase());
+      return matchesStatus && matchesTitle;
     })
     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <>
       <AdminSidebar />
-      <Box sx={{ margin: "auto", width: "95%", padding: 2 }}> {/* Adjusted width to 95% */}
+      <Box sx={{ margin: "auto", width: "95%", padding: 2 }}>
         <FormControl variant="outlined" sx={{ minWidth: 120, marginRight: 2 }}>
           <InputLabel id="status-label">Filter by Status</InputLabel>
           <Select
@@ -160,7 +159,7 @@ const MovieTable = () => {
         component={Paper}
         sx={{
           margin: "auto",
-          width: "95%", // Consistent width across the page
+          width: "95%",
           boxShadow: 3,
           borderRadius: 2,
         }}
@@ -243,9 +242,8 @@ const MovieTable = () => {
         />
       </TableContainer>
 
-      {/* Modal for Adding New Movie */}
       <Modal open={openModal} onClose={handleCloseModal}>
-        <Box sx={{ p: 4, backgroundColor: "white", maxWidth: 600, margin: "auto", mt: "10%" }}>
+        <Box sx={{ p: 4, backgroundColor: "rgba(0, 21, 41, 0.85)", maxWidth: 600, margin: "auto", mt: "10%" }}>
           <Typography variant="h6" gutterBottom>
             Add New Movie
           </Typography>
@@ -317,8 +315,6 @@ const MovieTable = () => {
             value={newMovie.overview}
             onChange={handleInputChange}
           />
-
-          {/* Additional fields for genre_ids, production_countries, etc. */}
 
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
             <Button variant="contained" color="primary" onClick={handleAddMovie}>

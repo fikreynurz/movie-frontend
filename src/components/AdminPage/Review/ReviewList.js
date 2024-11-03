@@ -14,6 +14,8 @@ import {
   TablePagination,
   Box,
   Checkbox,
+  Modal,
+  Button,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -31,12 +33,16 @@ const ReviewList = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  // State untuk modal ulasan penuh
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedReviewContent, setSelectedReviewContent] = useState("");
+
   useEffect(() => {
     const getReviews = async () => {
       try {
         const response = await api.get("/reviews");
-        const allReviews = response.data.flatMap(movie =>
-          movie.reviews.map(review => ({ ...review, movie_id: movie.movie_id }))
+        const allReviews = response.data.flatMap((movie) =>
+          movie.reviews.map((review) => ({ ...review, movie_id: movie.movie_id }))
         );
         setReviews(allReviews);
         setFilteredReviews(allReviews);
@@ -52,14 +58,14 @@ const ReviewList = () => {
 
     if (searchQuery) {
       filtered = filtered.filter(
-        review =>
+        (review) =>
           review.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
           review.content.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     if (searchFilmId) {
-      filtered = filtered.filter(review =>
+      filtered = filtered.filter((review) =>
         review.movie_id.toString().includes(searchFilmId)
       );
     }
@@ -85,7 +91,7 @@ const ReviewList = () => {
     if (selectAll) {
       setSelectedReviews([]);
     } else {
-      setSelectedReviews(filteredReviews.map((review) => review.id));
+      setSelectedReviews(filteredReviews.map((review) => review._id));
     }
     setSelectAll(!selectAll);
   };
@@ -97,6 +103,32 @@ const ReviewList = () => {
       setSelectedReviews([...selectedReviews, reviewId]);
     }
   };
+
+  // Fungsi untuk melihat ulasan penuh
+  const handleViewReview = (content) => {
+    setSelectedReviewContent(content);
+    setOpenModal(true);
+  };
+
+  // Fungsi untuk menutup modal ulasan penuh
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedReviewContent("");
+  };
+
+  // Fungsi untuk menghapus ulasan
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      const token = localStorage.getItem("token"); // Ambil token dari localStorage
+      await api.delete(`/reviews/${reviewId}`, {
+        headers: { Authorization: `Bearer ${token}` }, // Kirim token sebagai bagian dari header
+      });
+      setReviews((prevReviews) => prevReviews.filter((review) => review.id !== reviewId));
+      setFilteredReviews((prevFiltered) => prevFiltered.filter((review) => review.id !== reviewId));
+    } catch (error) {
+      console.error("Error deleting review:", error);
+    }
+  };  
 
   return (
     <>
@@ -158,11 +190,11 @@ const ReviewList = () => {
                 </TableRow>
               ) : (
                 paginatedReviews.map((review) => (
-                  <TableRow key={review.id} hover>
+                  <TableRow key={`${review.movie_id}-${review._id}`} hover>
                     <TableCell padding="checkbox">
                       <Checkbox
-                        checked={selectedReviews.includes(review.id)}
-                        onChange={() => handleSelectReview(review.id)}
+                        checked={selectedReviews.includes(review._id)}
+                        onChange={() => handleSelectReview(review._id)}
                         color="primary"
                       />
                     </TableCell>
@@ -174,10 +206,10 @@ const ReviewList = () => {
                         : review.content}
                     </TableCell>
                     <TableCell align="center">
-                      <IconButton color="info">
+                      <IconButton color="info" onClick={() => handleViewReview(review.content)}>
                         <VisibilityIcon />
                       </IconButton>
-                      <IconButton color="error">
+                      <IconButton color="error" onClick={() => handleDeleteReview(review.movie_id, review._id)}>
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>
@@ -196,9 +228,26 @@ const ReviewList = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </TableContainer>
+
+        {/* Modal untuk melihat ulasan penuh */}
+        <Modal open={openModal} onClose={handleCloseModal}>
+          <Box sx={{ 
+            p: 4, 
+            backgroundColor: "rgba(0, 21, 41, 0.85)", 
+            borderRadius: 2, 
+            maxWidth: 400, 
+            margin: "auto", 
+            mt: "10%",
+            boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.5)",
+          }}>
+            <Typography variant="h6" gutterBottom>Full Review</Typography>
+            <Typography variant="body1" sx={{ mb: 2 }}>{selectedReviewContent}</Typography>
+            <Button variant="contained" color="primary" onClick={handleCloseModal}>Close</Button>
+          </Box>
+        </Modal>
       </Container>
     </>
-    );
-  };
+  );
+};
 
 export default ReviewList;

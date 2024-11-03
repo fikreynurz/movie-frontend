@@ -20,7 +20,7 @@ export function initStarscape() {
     resizeCanvas();
   
     const stars = [];
-    const numStars = 200;
+    const numStars = 500;
   
     // Initialize stars
     for (let i = 0; i < numStars; i++) {

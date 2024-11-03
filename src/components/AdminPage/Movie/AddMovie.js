@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
 import axios from 'axios';
+import api from '../../Api';
 
 const AddMovie = () => {
   const [title, setTitle] = useState('');
@@ -10,7 +11,7 @@ const AddMovie = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newMovie = { title, release_date: releaseDate, popularity };
-    await axios.post('http://localhost:5000/api/movies', newMovie);
+    await api.post('/movies', newMovie);
     setTitle('');
     setReleaseDate('');
     setPopularity('');

@@ -10,8 +10,10 @@ import {
   IconButton,
   Typography,
   TablePagination,
+  TextField,
   Box,
-  Container,
+  Modal,
+  Button,
 } from "@mui/material";
 import { Visibility as VisibilityIcon } from "@mui/icons-material";
 import AdminSidebar from "../AdminSidebar";
@@ -22,21 +24,23 @@ const GenreList = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10); // Sama dengan rows per page di MovieTable
   const [adminName, setAdminName] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const [newGenre, setNewGenre] = useState("");
 
-  // Fetch genres from the backend
+  const fetchGenres = async () => {
+    try {
+      const response = await api.get("/genres"); // Update dengan endpoint yang sesuai
+      setGenres(response.data.genres);
+      const userLogged = localStorage.getItem("user");
+      const userParsed = JSON.parse(userLogged);
+      setAdminName(userParsed.name);
+    } catch (err) {
+      console.error("Failed to fetch genres:", err);
+    }
+  };
+
+
   useEffect(() => {
-    const fetchGenres = async () => {
-      try {
-        const response = await api.get("/genres"); // Update dengan endpoint yang sesuai
-        setGenres(response.data.genres);
-        const userLogged = localStorage.getItem("user");
-        const userParsed = JSON.parse(userLogged);
-        setAdminName(userParsed.name);
-      } catch (err) {
-        console.error("Failed to fetch genres:", err);
-      }
-    };
-
     fetchGenres();
   }, []);
 
@@ -55,10 +59,29 @@ const GenreList = () => {
     page * rowsPerPage + rowsPerPage
   );
 
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
+
+  const handleAddGenre = async () => {
+    try {
+      await api.post("/genres", { name: newGenre });
+      fetchGenres();
+      handleCloseModal();
+      setNewGenre("");
+    } catch (error) {
+      console.error("Error adding genre:", error);
+    }
+  };
+
+
+
   return (
     <>
       <AdminSidebar />
       <Box sx={{ margin: "auto", width: "95%", padding: 2 }}>
+        <Button variant="contained" color="primary" onClick={handleOpenModal}>
+          Add Genre
+        </Button>
         <Typography variant="h4" align="center" gutterBottom>
           Genre List
         </Typography>
@@ -106,6 +129,35 @@ const GenreList = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
+
+            {/* Modal for Adding New Genre */}
+        <Modal open={openModal} onClose={handleCloseModal}>
+        <Box sx={{ 
+          p: 4, 
+          backgroundColor: "rgba(0, 21, 41, 0.85)", 
+          borderRadius: 2, 
+          maxWidth: 400, 
+          margin: "auto", 
+          mt: "10%",
+          boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.5)",
+        }}>
+          <Typography variant="h6" gutterBottom>Add New Genre</Typography>
+          <TextField
+            label="Genre Name"
+            variant="outlined"
+            fullWidth
+            value={newGenre}
+            onChange={(e) => setNewGenre(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+            <Button variant="contained" color="primary" onClick={handleAddGenre}>
+              Submit
+            </Button>
+            <Button onClick={handleCloseModal} sx={{ ml: 2 }}>Cancel</Button>
+          </Box>
+        </Box>
+      </Modal>
     </>
   );
 };
