@@ -34,18 +34,19 @@ const MovieTable = () => {
   const [newMovie, setNewMovie] = useState({
     title: "",
     adult: false,
-    backdrop_path: null,
-    poster_path: null,
+    backdrop: null,
+    poster: null,
     genre_ids: [],
     original_language: "",
     original_title: "",
     overview: "",
     popularity: 0,
     release_date: "",
+    video: false,
     vote_average: 0,
     vote_count: 0,
     category: [],
-    production_countries: [],
+    production_countries: [{ alias: "", english_name: "", native_name: "" }],
   });
 
   const navigate = useNavigate();
@@ -94,13 +95,15 @@ const MovieTable = () => {
   const handleAddMovie = async () => {
     const formData = new FormData();
     Object.keys(newMovie).forEach((key) => {
-      if (key === "backdrop_path" || key === "poster_path") {
+      if (key === "backdrop" || key === "poster") {
         formData.append(key, newMovie[key]);
+      } else if (Array.isArray(newMovie[key])) {
+        formData.append(key, JSON.stringify(newMovie[key])); // For arrays, convert to JSON string
       } else {
-        formData.append(key, JSON.stringify(newMovie[key]));
+        formData.append(key, newMovie[key]);
       }
     });
-
+  
     try {
       await api.post("/movies", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -110,6 +113,13 @@ const MovieTable = () => {
     } catch (error) {
       console.error("Error adding movie:", error);
     }
+  };
+  
+
+  const handleCountryChange = (index, field, value) => {
+    const updatedCountries = [...newMovie.production_countries];
+    updatedCountries[index] = { ...updatedCountries[index], [field]: value };
+    setNewMovie((prev) => ({ ...prev, production_countries: updatedCountries }));
   };
 
   const displayedMovies = movies
@@ -207,7 +217,7 @@ const MovieTable = () => {
                 </TableCell>
 
                 <TableCell>
-                  {movie.isApproved === "Approved" ? (
+                  {movie.isApproved === true ? (
                     <Typography color="green"><strong>Approved</strong></Typography>
                   ) : (
                     <Typography color="red"><strong>Unapproved</strong></Typography>
@@ -247,83 +257,72 @@ const MovieTable = () => {
           <Typography variant="h6" gutterBottom>
             Add New Movie
           </Typography>
-
-          <TextField
-            label="Title"
-            name="title"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={newMovie.title}
-            onChange={handleInputChange}
-          />
-
-          <TextField
-            label="Original Title"
-            name="original_title"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={newMovie.original_title}
-            onChange={handleInputChange}
-          />
+          <Box
+            sx={{
+              maxHeight: "65vh",  // Mengatur tinggi maksimum konten modal
+              overflowY: "auto",  // Mengaktifkan scroll secara vertikal
+              pr: 2               // Memberi sedikit padding pada sisi kanan untuk ruang scroll
+            }}
+          >
+          <TextField label="Title" name="title" variant="outlined" fullWidth margin="normal" value={newMovie.title} onChange={handleInputChange} />
+          <TextField label="Original Title" name="original_title" variant="outlined" fullWidth margin="normal" value={newMovie.original_title} onChange={handleInputChange} />
 
           <FormControl fullWidth margin="normal">
             <InputLabel>Backdrop Image</InputLabel>
-            <Button
-              variant="contained"
-              component="label"
-              startIcon={<CloudUploadIcon />}
-            >
+            <Button variant="contained" component="label" startIcon={<CloudUploadIcon />}>
               Upload
-              <input
-                type="file"
-                name="backdrop_path"
-                hidden
-                onChange={handleFileChange}
-                accept="image/*"
-              />
+              <input type="file" name="backdrop" hidden onChange={handleFileChange} accept="image/*" />
             </Button>
           </FormControl>
 
           <FormControl fullWidth margin="normal">
             <InputLabel>Poster Image</InputLabel>
-            <Button
-              variant="contained"
-              component="label"
-              startIcon={<CloudUploadIcon />}
-            >
+            <Button variant="contained" component="label" startIcon={<CloudUploadIcon />}>
               Upload
-              <input
-                type="file"
-                name="poster_path"
-                hidden
-                onChange={handleFileChange}
-                accept="image/*"
-              />
+              <input type="file" name="poster" hidden onChange={handleFileChange} accept="image/*" />
             </Button>
           </FormControl>
 
-          <TextField
-            label="Overview"
-            name="overview"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            multiline
-            rows={3}
-            value={newMovie.overview}
-            onChange={handleInputChange}
-          />
+          <TextField label="Overview" name="overview" variant="outlined" fullWidth margin="normal" multiline rows={3} value={newMovie.overview} onChange={handleInputChange} />
+          <TextField label="Popularity" name="popularity" variant="outlined" fullWidth margin="normal" type="number" value={newMovie.popularity} onChange={handleInputChange} />
+          <TextField label="Release Date" name="release_date" variant="outlined" fullWidth margin="normal" type="date" value={newMovie.release_date} onChange={handleInputChange} />
 
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-            <Button variant="contained" color="primary" onClick={handleAddMovie}>
-              Submit
-            </Button>
-            <Button onClick={handleCloseModal} sx={{ ml: 2 }}>
-              Cancel
-            </Button>
-          </Box>
+          <TextField label="Original Language" name="original_language" variant="outlined" fullWidth margin="normal" value={newMovie.original_language} onChange={handleInputChange} />
+          <TextField label="Vote Average" name="vote_average" variant="outlined" fullWidth margin="normal" type="number" value={newMovie.vote_average} onChange={handleInputChange} />
+          <TextField label="Vote Count" name="vote_count" variant="outlined" fullWidth margin="normal" type="number" value={newMovie.vote_count} onChange={handleInputChange} />
+
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Adult</InputLabel>
+            <Select name="adult" value={newMovie.adult} onChange={handleInputChange}>
+              <MenuItem value={true}>Yes</MenuItem>
+              <MenuItem value={false}>No</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Video</InputLabel>
+            <Select name="video" value={newMovie.video} onChange={handleInputChange}>
+              <MenuItem value={true}>Yes</MenuItem>
+              <MenuItem value={false}>No</MenuItem>
+            </Select>
+          </FormControl>
+
+          <TextField label="Genre IDs" name="genre_ids" variant="outlined" fullWidth margin="normal" placeholder="Comma-separated e.g. 28,14,35" value={newMovie.genre_ids.join(",")} onChange={(e) => setNewMovie({ ...newMovie, genre_ids: e.target.value.split(",").map(Number) })} />
+
+          <TextField label="Categories" name="category" variant="outlined" fullWidth margin="normal" placeholder="Comma-separated" value={newMovie.category.join(",")} onChange={(e) => setNewMovie({ ...newMovie, category: e.target.value.split(",") })} />
+
+          <Typography variant="subtitle1" gutterBottom>Production Countries</Typography>
+          {newMovie.production_countries.map((country, index) => (
+            <Box key={index} sx={{ display: "flex", gap: 2, mb: 2 }}>
+              <TextField label="Alias" fullWidth value={country.alias} onChange={(e) => handleCountryChange(index, "alias", e.target.value)} />
+              <TextField label="English Name" fullWidth value={country.english_name} onChange={(e) => handleCountryChange(index, "english_name", e.target.value)} />
+              <TextField label="Native Name" fullWidth value={country.native_name} onChange={(e) => handleCountryChange(index, "native_name", e.target.value)} />
+            </Box>
+          ))}
+
+          <Button variant="contained" color="primary" onClick={handleAddMovie}>Submit</Button>
+          <Button onClick={handleCloseModal} sx={{ ml: 2 }}>Cancel</Button>
+        </Box>
         </Box>
       </Modal>
     </>

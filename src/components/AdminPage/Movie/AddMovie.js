@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
-import axios from 'axios';
+//import axios from 'axios';
 import api from '../../Api';
 
 const AddMovie = () => {
