@@ -26,43 +26,43 @@ const Login = () => {
   const loginUser = async (e) => {
     e.preventDefault();
     try {
-        const response = await api.post("/users/login", {
-            email,
-            password,
-        });
+      const response = await api.post("/users/login", {
+        email,
+        password,
+      });
 
-        const data = response.data;
-        localStorage.setItem("token", data.token);  // Simpan token ke localStorage
-        localStorage.setItem("user", JSON.stringify(data));
+      const data = response.data;
+      localStorage.setItem("token", data.token); // Simpan token ke localStorage
+      localStorage.setItem("user", JSON.stringify(data));
 
-        if (data.role === "admin") {
-            navigate("/admin/user");
-        } else {
-            navigate("/");
-        }
+      if (data.role === "admin") {
+        navigate("/admin/user");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
-        setError("Invalid email or password. Please try again.");
+      setError("Invalid email or password. Please try again.");
     }
-};
+  };
 
   const responseGoogle = async (response) => {
     const { credential } = response;
     try {
-        const res = await axios.post(
-            "http://localhost:5000/api/users/auth/google/login",
-            { idToken: credential }
-        );
-        const data = res.data;
-        localStorage.setItem("token", data.token);  // Simpan token di localStorage
-        localStorage.setItem("user", JSON.stringify(data));
+      const res = await api.post(
+        "/users/auth/google/login",
+        { idToken: credential }
+      );
+      const data = res.data;
+      localStorage.setItem("token", data.token); // Simpan token di localStorage
+      localStorage.setItem("user", JSON.stringify(data));
 
-        if (data.role === "admin") {
-            navigate("/admin/user");
-        } else {
-            navigate("/");
-        }
+      if (data.role === "admin") {
+        navigate("/admin/user");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
-        setError("Failed to login with Google. Please try again.");
+      setError("Failed to login with Google. Please try again.");
     }
   };
 
@@ -78,7 +78,7 @@ const Login = () => {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            minHeight: "100vh"
+            minHeight: "100vh",
           }}
         >
           <Card sx={{ width: "100%", p: 3 }}>
