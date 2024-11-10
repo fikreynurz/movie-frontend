@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+//import axios from 'axios';
 import {Typography, Card, CardMedia, CardContent, Button, Box, Pagination, CircularProgress } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 import api from "../components/Api"
+import { useNavigate } from 'react-router-dom';
 
 const SearchResults = () => {
   const location = useLocation();
@@ -16,6 +17,7 @@ const SearchResults = () => {
   const [actorTotalPages, setActorTotalPages] = useState(1);
   const [loadingMovies, setLoadingMovies] = useState(false);
   const [loadingActors, setLoadingActors] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovieResults = async () => {
@@ -62,6 +64,17 @@ const SearchResults = () => {
   };
 
   return (
+    <>
+    {/* Button "Back" di luar Container */}
+    <Box sx={{ display: 'flex', justifyContent: 'flex-start', px: 2, pt: 2 }}>
+      <Button
+        color="inherit"
+        size="small"
+        onClick={() => navigate(-1)}
+      >
+        Back
+      </Button>
+    </Box>
     <div>
       <Typography variant="h4" component="h2" gutterBottom>
         Search Results for "{query}"
@@ -185,6 +198,7 @@ const SearchResults = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

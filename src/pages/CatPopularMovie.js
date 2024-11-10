@@ -3,12 +3,15 @@ import { Container, Box, Typography, CircularProgress, Pagination } from '@mui/m
 import Movie from '../components/Movie/Movie';
 //import axios from 'axios';
 import api from '../components/Api';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const CatPopularMovie = () => {
   const [popularMovies, setPopularMovies] = useState([]);
   const [loadingPopular, setLoadingPopular] = useState(true);  
   const [currentPage, setCurrentPage] = useState(1);  // State for current page
   const [totalPages, setTotalPages] = useState(1);    // State for total pages
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPopularMovies = async () => {
@@ -33,7 +36,19 @@ const CatPopularMovie = () => {
   };
 
   return (
-    <Container maxWidth="lg">
+    <>
+    {/* Button "Back" di luar Container */}
+    <Box sx={{ display: 'flex', justifyContent: 'flex-start', px: 2, pt: 2 }}>
+      <Button
+        color="inherit"
+        size="small"
+        onClick={() => navigate(-1)}
+      >
+        Back
+      </Button>
+    </Box>
+
+    <Container maxWidth="lg" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
       <Box my={4}>
         <Typography variant="h4" component="h2" gutterBottom>
           Popular Movies
@@ -72,6 +87,7 @@ const CatPopularMovie = () => {
         )}
       </Box>
     </Container>
+    </>
   );
 };
 

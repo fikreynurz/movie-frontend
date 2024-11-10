@@ -41,13 +41,13 @@ const CastTable = () => {
 
   const fetchCasts = async () => {
     try {
-      const response = await api.get('/casts');
+      const response = await api.get('/casts'); // Pastikan route ini sesuai dengan backend
       setCasts(response.data);
       aggregateCastsByMember(response.data);
     } catch (error) {
       console.error('Error fetching casts:', error);
     }
-  };
+  };  
 
   const fetchMovies = async () => {
     try {

@@ -37,6 +37,11 @@ const ReviewList = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedReviewContent, setSelectedReviewContent] = useState("");
 
+  // State untuk modal konfirmasi hapus
+  const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
+  const [deleteMovieId, setDeleteMovieId] = useState(null);
+  const [deleteReviewId, setDeleteReviewId] = useState(null);
+
   useEffect(() => {
     const getReviews = async () => {
       try {
@@ -46,6 +51,7 @@ const ReviewList = () => {
         );
         setReviews(allReviews);
         setFilteredReviews(allReviews);
+        console.log("Reviews fetched:", allReviews);
       } catch (error) {
         console.error("Error fetching reviews:", error);
       }
@@ -116,19 +122,34 @@ const ReviewList = () => {
     setSelectedReviewContent("");
   };
 
+  // Fungsi untuk membuka modal konfirmasi hapus
+  const openDeleteConfirmModal = (movie_id, reviewId) => {
+    setDeleteMovieId(movie_id);
+    setDeleteReviewId(reviewId);
+    setOpenConfirmDeleteModal(true);
+  };
+
+  // Fungsi untuk menutup modal konfirmasi hapus
+  const handleCloseDeleteConfirmModal = () => {
+    setOpenConfirmDeleteModal(false);
+    setDeleteMovieId(null);
+    setDeleteReviewId(null);
+  };
+
   // Fungsi untuk menghapus ulasan
-  const handleDeleteReview = async (reviewId) => {
+  const handleDeleteReview = async () => {
     try {
       const token = localStorage.getItem("token"); // Ambil token dari localStorage
-      await api.delete(`/reviews/${reviewId}`, {
+      await api.delete(`/reviews/${deleteMovieId}/${deleteReviewId}`, { // gunakan deleteMovieId dan deleteReviewId
         headers: { Authorization: `Bearer ${token}` }, // Kirim token sebagai bagian dari header
       });
-      setReviews((prevReviews) => prevReviews.filter((review) => review.id !== reviewId));
-      setFilteredReviews((prevFiltered) => prevFiltered.filter((review) => review.id !== reviewId));
+      setReviews((prevReviews) => prevReviews.filter((review) => review.id !== deleteReviewId));
+      setFilteredReviews((prevFiltered) => prevFiltered.filter((review) => review.id !== deleteReviewId));
+      handleCloseDeleteConfirmModal(); // Tutup modal konfirmasi setelah menghapus
     } catch (error) {
       console.error("Error deleting review:", error);
     }
-  };  
+  };
 
   return (
     <>
@@ -182,19 +203,19 @@ const ReviewList = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedReviews.length === 0 ? (
+              {filteredReviews.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} align="center">
                     No reviews found
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedReviews.map((review) => (
-                  <TableRow key={`${review.movie_id}-${review._id}`} hover>
+                filteredReviews.map((review) => (
+                  <TableRow key={`${review.movie_id}-${review.id}`} hover>
                     <TableCell padding="checkbox">
                       <Checkbox
-                        checked={selectedReviews.includes(review._id)}
-                        onChange={() => handleSelectReview(review._id)}
+                        checked={selectedReviews.includes(review.id)}
+                        onChange={() => handleSelectReview(review.id)}
                         color="primary"
                       />
                     </TableCell>
@@ -209,7 +230,7 @@ const ReviewList = () => {
                       <IconButton color="info" onClick={() => handleViewReview(review.content)}>
                         <VisibilityIcon />
                       </IconButton>
-                      <IconButton color="error" onClick={() => handleDeleteReview(review.movie_id, review._id)}>
+                      <IconButton color="error" onClick={() => openDeleteConfirmModal(review.movie_id, review.id)}>
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>
@@ -243,6 +264,28 @@ const ReviewList = () => {
             <Typography variant="h6" gutterBottom>Full Review</Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>{selectedReviewContent}</Typography>
             <Button variant="contained" color="primary" onClick={handleCloseModal}>Close</Button>
+          </Box>
+        </Modal>
+
+        {/* Modal untuk konfirmasi hapus */}
+        <Modal open={openConfirmDeleteModal} onClose={handleCloseDeleteConfirmModal}>
+          <Box sx={{ 
+            p: 4, 
+            backgroundColor: "rgba(0, 21, 41, 0.85)", 
+            borderRadius: 2, 
+            maxWidth: 400, 
+            margin: "auto", 
+            mt: "10%",
+            boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.5)",
+          }}>
+            <Typography variant="h6" gutterBottom>Confirm Delete</Typography>
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              Are you sure you want to delete this review?
+            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button variant="contained" color="error" onClick={handleDeleteReview}>Delete</Button>
+              <Button onClick={handleCloseDeleteConfirmModal} sx={{ ml: 2 }}>Cancel</Button>
+            </Box>
           </Box>
         </Modal>
       </Container>

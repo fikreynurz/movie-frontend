@@ -3,12 +3,15 @@ import { Container, Box, Typography, CircularProgress, Pagination } from '@mui/m
 import Movie from '../components/Movie/Movie';
 //import axios from 'axios';
 import api from '../components/Api';
+import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router-dom';
 
 const CatRecentMovie = () => {
   const [recentMovies, setRecentMovies] = useState([]);
   const [loadingRecent, setLoadingRecent] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);  // State for current page
   const [totalPages, setTotalPages] = useState(1);    // State for total pages
+  const navigate = useNavigate();
 
   // Fetch recent movies with pagination
   useEffect(() => {
@@ -23,7 +26,7 @@ const CatRecentMovie = () => {
       } finally {
           setLoadingRecent(false);
       }
-  };
+    };
 
     fetchRecentMovies();
   }, [currentPage]);  // Fetch new data whenever current page changes
@@ -34,6 +37,18 @@ const CatRecentMovie = () => {
   };
 
   return (
+    <>
+    {/* Button "Back" di luar Container */}
+    <Box sx={{ display: 'flex', justifyContent: 'flex-start', px: 2, pt: 2 }}>
+      <Button
+        color="inherit"
+        size="small"
+        onClick={() => navigate(-1)}
+      >
+        Back
+      </Button>
+    </Box>
+
     <Container maxWidth="lg">
       <Box my={4}>
         <Typography variant="h4" component="h2" gutterBottom>
@@ -73,6 +88,7 @@ const CatRecentMovie = () => {
         )}
       </Box>
     </Container>
+    </>
   );
 };
 

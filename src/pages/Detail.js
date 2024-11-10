@@ -44,14 +44,16 @@ const Detail = () => {
     return format(date, 'PPP'); // Formats the date as 'April 27th, 2024'
   };
 
-  // Cek status login dan ambil data pengguna dari localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
-        setAuthorName(parsedUser.name || ''); // Isi nama author jika pengguna sudah login
+
+        // Cek status favorit
+        const isMovieFavorite = parsedUser.favoriteMovie?.includes(parseInt(id, 10));
+        setIsFavorite(!!isMovieFavorite);
       } catch (error) {
         console.error("Error parsing user data from localStorage:", error);
         setUser(null);
@@ -59,7 +61,7 @@ const Detail = () => {
     } else {
       setUser(null);
     }
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -133,7 +135,7 @@ const Detail = () => {
     if (!user) {
       setSnackbar({ open: true, message: 'Please log in to remove from favorites.', severity: 'error' });
       return;
-    }
+    }  
 
     try {
       const response = await api.delete(`/users/${user.uid}/favorite-movie/${id}`); // Ganti dengan endpoint yang sesuai
@@ -231,6 +233,18 @@ const Detail = () => {
           }}
         />
       )}
+    
+    <>
+    {/* Button "Back" di luar Container */}
+    <Box sx={{ display: 'flex', justifyContent: 'flex-start', px: 2, pt: 2 }}>
+      <Button
+        color="inherit"
+        size="small"
+        onClick={() => navigate(-1)}
+      >
+        Back
+      </Button>
+    </Box>
 
     <Container maxWidth="lg">
       <Box my={4}>
@@ -503,6 +517,7 @@ const Detail = () => {
         </Snackbar>
       </Box>
     </Container>
+    </>
     </>
   );
 };

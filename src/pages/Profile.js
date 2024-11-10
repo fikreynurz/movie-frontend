@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Box, CircularProgress, Avatar } from '@mui/material';
+import { Button, Container, Typography, Box, CircularProgress, Avatar } from '@mui/material';
 import {  useNavigate } from 'react-router-dom';
 //import axios from 'axios';
 import Movie from '../components/Movie/Movie';
@@ -36,6 +36,17 @@ const Profile = () => {
   }, []);
 
   return (
+    <>
+    {/* Button "Back" di luar Container */}
+    <Box sx={{ display: 'flex', justifyContent: 'flex-start', px: 2, pt: 2 }}>
+      <Button
+        color="inherit"
+        size="small"
+        onClick={() => navigate(-1)}
+      >
+        Back
+      </Button>
+    </Box>
     <Container maxWidth="lg">
       <Box my={4}>
         {/* Section Profile */}
@@ -76,6 +87,7 @@ const Profile = () => {
         )}
       </Box>
     </Container>
+    </>
   );
 };
 

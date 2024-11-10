@@ -72,8 +72,6 @@ const FilterModal = () => {
     }
     handleClose();
   };
-
-
   
 
   return (

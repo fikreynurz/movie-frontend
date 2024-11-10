@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 //import axios from 'axios';
 import {Typography, Card, CardMedia, CardContent, Button, Box, Pagination, CircularProgress } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../components/Api';
 
 const FilterResults = () => {
@@ -14,6 +14,7 @@ const FilterResults = () => {
   const [page, setPage] = useState(1);  // Current page
   const [totalPages, setTotalPages] = useState(1);  // Total pages
   const [loading, setLoading] = useState(false);  // State for loading
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFilteredMovies = async () => {
@@ -44,6 +45,16 @@ const FilterResults = () => {
   };
 
   return (
+    <>
+    <Box sx={{ display: 'flex', justifyContent: 'flex-start', px: 2, pt: 2 }}>
+    <Button
+      color="inherit"
+      size="small"
+      onClick={() => navigate(-1)}
+    >
+      Back
+    </Button>
+  </Box>
     <div>
       <Typography variant="h4" component="h2" gutterBottom>
         Filter Results
@@ -106,6 +117,7 @@ const FilterResults = () => {
         </>
       )}
     </div>
+    </>
   );
 };
 
