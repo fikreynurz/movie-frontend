@@ -41,18 +41,15 @@ const EditMovieModal = ({ open, handleClose, movieId, fetchMovies }) => {
     } catch (error) {
       console.error('Error fetching movie data:', error);
     }
-  };
-
+  };  
   const fetchAvailableData = async () => {
     try {
-      const genresResponse = await api.get('/genres'); // misalnya API endpoint untuk daftar genre
-      const castResponse = await api.get('/cast'); // misalnya API endpoint untuk daftar cast
+      const genresResponse = await api.get('/genres'); // Pastikan endpoint ini benar
       setAvailableGenres(genresResponse.data);
-      setAvailableCast(castResponse.data.map(c => ({ id: c.id, name: c.name }))); // Hanya mengambil `id` dan `name`
     } catch (error) {
-      console.error('Error fetching available data:', error);
+      console.error('Error fetching available genres:', error);
     }
-  };
+  };  
 
   const fetchAvailableGenres = async () => {
     try {
@@ -92,7 +89,7 @@ const EditMovieModal = ({ open, handleClose, movieId, fetchMovies }) => {
         : [...prev[type], id];
       return { ...prev, [type]: updatedArray };
     });
-  };
+  };  
 
   const handleSave = async () => {
     try {
@@ -178,21 +175,22 @@ const EditMovieModal = ({ open, handleClose, movieId, fetchMovies }) => {
         <FormControl component="fieldset" sx={{ mt: 2 }}>
           <FormLabel component="legend">Genres</FormLabel>
           <FormGroup row>
-            {Array.isArray(availableGenres) && availableGenres.length > 0 ? (
+            {availableGenres.length > 0 ? (
               availableGenres.map((genre) => (
                 <FormControlLabel
-                  key={genre.id}
                   control={
                     <Checkbox
                       checked={movieData.genre_ids.includes(genre.id)}
-                      onChange={() => handleGenreCheckboxChange(genre.id)}
+                      onChange={() => handleCheckboxChange("genre_ids", genre.id)}
+                      name="genre_ids"
                     />
                   }
                   label={genre.name}
+                  key={genre.id}
                 />
               ))
             ) : (
-              <FormHelperText>No genres available</FormHelperText>
+              <Typography variant="body2">No genres available</Typography>
             )}
           </FormGroup>
         </FormControl>
