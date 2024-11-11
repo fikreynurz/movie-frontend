@@ -1,5 +1,5 @@
 // AddMovieModal.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Box,
@@ -7,9 +7,11 @@ import {
   TextField,
   Button,
   FormControl,
-  InputLabel,
+  FormControlLabel,
+  Checkbox,
   Select,
   MenuItem,
+  InputLabel,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import api from "../../Api";
@@ -33,6 +35,21 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
     backdrop: null,
   });
 
+  const [genres, setGenres] = useState([]);
+
+  useEffect(() => {
+    fetchGenres();
+  }, []);
+
+  const fetchGenres = async () => {
+    try {
+      const response = await api.get("/genres"); // Sesuaikan route ini jika berbeda
+      setGenres(response.data.genres);
+    } catch (error) {
+      console.error("Error fetching genres:", error);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewMovie((prev) => ({ ...prev, [name]: value }));
@@ -40,10 +57,28 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    if (files.length > 0) { // Pastikan ada file yang diunggah
+    if (files.length > 0) {
       setNewMovie((prev) => ({ ...prev, [name]: files[0] }));
     }
-  };  
+  };
+
+  const handleGenreChange = (genreId) => {
+    setNewMovie((prev) => ({
+      ...prev,
+      genre_ids: prev.genre_ids.includes(genreId)
+        ? prev.genre_ids.filter((id) => id !== genreId)
+        : [...prev.genre_ids, genreId],
+    }));
+  };
+
+  const handleCategoryChange = (category) => {
+    setNewMovie((prev) => ({
+      ...prev,
+      category: prev.category.includes(category)
+        ? prev.category.filter((cat) => cat !== category)
+        : [...prev.category, category],
+    }));
+  };
 
   const handleCountryChange = (index, field, value) => {
     const updatedCountries = [...newMovie.production_countries];
@@ -52,20 +87,17 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
   };
 
   const handleAddMovie = async () => {
-    console.log("Data yang akan dikirim:", newMovie); // Cek data yang dikirim
-    console.log("Poster file:", newMovie.poster);
-    console.log("Backdrop file:", newMovie.backdrop);
     const formData = new FormData();
     Object.keys(newMovie).forEach((key) => {
       if ((key === "poster" || key === "backdrop") && newMovie[key] !== null) {
-        formData.append(key, newMovie[key]); // Hanya tambahkan jika file tidak null
+        formData.append(key, newMovie[key]);
       } else if (Array.isArray(newMovie[key])) {
         formData.append(key, JSON.stringify(newMovie[key]));
       } else {
         formData.append(key, newMovie[key]);
       }
     });
-  
+
     try {
       await api.post("/movies", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -76,7 +108,6 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
       console.error("Error adding movie:", error);
     }
   };
-  
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -126,8 +157,35 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
             </Select>
           </FormControl>
 
-          <TextField label="Genre IDs" name="genre_ids" variant="outlined" fullWidth margin="normal" placeholder="Comma-separated e.g. 28,14,35" value={newMovie.genre_ids.join(",")} onChange={(e) => setNewMovie({ ...newMovie, genre_ids: e.target.value.split(",").map(Number) })} />
-          <TextField label="Categories" name="category" variant="outlined" fullWidth margin="normal" placeholder="Comma-separated" value={newMovie.category.join(",")} onChange={(e) => setNewMovie({ ...newMovie, category: e.target.value.split(",") })} />
+          <Typography variant="subtitle1" gutterBottom>Genres</Typography>
+          {genres.map((genre) => (
+            <FormControlLabel
+              key={genre.id}
+              control={
+                <Checkbox
+                  checked={newMovie.genre_ids.includes(genre.id)}
+                  onChange={() => handleGenreChange(genre.id)}
+                  name="genre_ids"
+                />
+              }
+              label={genre.name}
+            />
+          ))}
+
+          <Typography variant="subtitle1" gutterBottom>Categories</Typography>
+          {["Recent", "Popular"].map((category) => (
+            <FormControlLabel
+              key={category}
+              control={
+                <Checkbox
+                  checked={newMovie.category.includes(category)}
+                  onChange={() => handleCategoryChange(category)}
+                  name="category"
+                />
+              }
+              label={category}
+            />
+          ))}
 
           <Typography variant="subtitle1" gutterBottom>Production Countries</Typography>
           {newMovie.production_countries.map((country, index) => (

@@ -19,11 +19,11 @@ import {
   Button,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import api from "../Api";
 import AddMovieModal from "./Movie/AddMovieModal";
-import EditApprovalModal from "./Movie/EditApprovalModal";
+import EditApprovalModal from "./Movie/EditMovieModal";
 
 const MovieTable = () => {
   const [movies, setMovies] = useState([]);
