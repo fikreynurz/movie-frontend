@@ -60,28 +60,35 @@ const CastTable = () => {
 
   const aggregateCastsByMember = (castsData) => {
     const castMap = new Map();
-
+  
     castsData.forEach((movieCast) => {
       movieCast.cast.forEach((member) => {
-        if (!castMap.has(member.name)) {
-          castMap.set(member.name, { name: member.name, movies: [movieCast.movie_id] });
+        const key = `${member.name}-${member.cast_id}`;
+        if (!castMap.has(key)) {
+          castMap.set(key, {
+            name: member.name,
+            cast_id: member.cast_id,
+            movies: [movieCast.movie_id]
+          });
         } else {
-          castMap.get(member.name).movies.push(movieCast.movie_id);
+          castMap.get(key).movies.push(movieCast.movie_id);
         }
       });
     });
-
+  
     setUniqueCasts(Array.from(castMap.values()));
   };
+  
 
-  const handleDelete = async (movie_id) => {
+  const handleDelete = async (movie_id, cast_id) => {
     try {
-      await api.delete(`/casts/${movie_id}`);
+      await api.delete(`/casts/${movie_id}/${cast_id}`);
       fetchCasts();
     } catch (error) {
       console.error('Error deleting cast:', error);
     }
   };
+  
 
   const handleOpenDialog = (cast = { movie_id: '', cast: [{ name: '', original_name: '', known_for_department: '', cast_id: '' }] }) => {
     setCurrentCast(cast);
@@ -107,24 +114,19 @@ const CastTable = () => {
           original_name: castMember.original_name || castMember.name,
           popularity: castMember.popularity || 0,
           profile_path: castMember.profile_path || '',
-          cast_id: castMember.cast_id || Math.floor(Math.random() * 100000),
           character: castMember.character || '',
           credit_id: castMember.credit_id || '',
           order: castMember.order || 0,
         })),
       };
-
-      console.log("Sending data to server:", castData);
-
+  
       let response;
       if (editMode) {
         response = await api.put(`/casts/${currentCast.movie_id}`, castData);
       } else {
-        response = await api.post('/casts', castData);
+        response = await api.post(`/casts/${currentCast.movie_id}`, castData); // Sertakan movie_id
       }
-
-      console.log("Response from server:", response.data);
-
+  
       fetchCasts();
       handleCloseDialog();
     } catch (error) {
@@ -192,7 +194,7 @@ const CastTable = () => {
                   <IconButton color="primary" onClick={() => handleOpenDialog(cast)}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton color="secondary" onClick={() => handleDelete(cast.movie_id)}>
+                  <IconButton color="secondary" onClick={() => handleDelete(cast.movie[0],cast.cast_id)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -250,13 +252,6 @@ const CastTable = () => {
               fullWidth
               value={currentCast.cast[0]?.known_for_department || ''}
               onChange={(e) => handleCastChange(0, 'known_for_department', e.target.value)}
-          />
-          <TextField
-              margin="dense"
-              label="Cast ID"
-              fullWidth
-              value={currentCast.cast[0]?.cast_id || ''}
-              onChange={(e) => handleCastChange(0, 'cast_id', e.target.value)}
           />
         </DialogContent>
         <DialogActions>

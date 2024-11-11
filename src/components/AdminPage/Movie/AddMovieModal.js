@@ -25,6 +25,12 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
     genre_ids: [],
     category: [],
     production_countries: [{ alias: "", english_name: "", native_name: "" }],
+    popularity: 0,
+    original_language: "en",
+    vote_average: 0,
+    vote_count: 0,
+    poster: null,
+    backdrop: null,
   });
 
   const handleInputChange = (e) => {
@@ -34,8 +40,10 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    setNewMovie((prev) => ({ ...prev, [name]: files[0] }));
-  };
+    if (files.length > 0) { // Pastikan ada file yang diunggah
+      setNewMovie((prev) => ({ ...prev, [name]: files[0] }));
+    }
+  };  
 
   const handleCountryChange = (index, field, value) => {
     const updatedCountries = [...newMovie.production_countries];
@@ -44,17 +52,20 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
   };
 
   const handleAddMovie = async () => {
+    console.log("Data yang akan dikirim:", newMovie); // Cek data yang dikirim
+    console.log("Poster file:", newMovie.poster);
+    console.log("Backdrop file:", newMovie.backdrop);
     const formData = new FormData();
     Object.keys(newMovie).forEach((key) => {
-      if (key === "backdrop" || key === "poster") {
-        formData.append(key, newMovie[key]);
+      if ((key === "poster" || key === "backdrop") && newMovie[key] !== null) {
+        formData.append(key, newMovie[key]); // Hanya tambahkan jika file tidak null
       } else if (Array.isArray(newMovie[key])) {
         formData.append(key, JSON.stringify(newMovie[key]));
       } else {
         formData.append(key, newMovie[key]);
       }
     });
-
+  
     try {
       await api.post("/movies", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -65,6 +76,7 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
       console.error("Error adding movie:", error);
     }
   };
+  
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -77,18 +89,16 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
           <TextField label="Original Title" name="original_title" variant="outlined" fullWidth margin="normal" value={newMovie.original_title} onChange={handleInputChange} />
 
           <FormControl fullWidth margin="normal">
-            <InputLabel>Backdrop Image</InputLabel>
             <Button variant="contained" component="label" startIcon={<CloudUploadIcon />}>
-              Upload
-              <input type="file" name="backdrop" hidden onChange={handleFileChange} accept="image/*" />
+              Upload Poster
+              <input type="file" name="poster" hidden onChange={handleFileChange} accept="image/*" />
             </Button>
           </FormControl>
 
           <FormControl fullWidth margin="normal">
-            <InputLabel>Poster Image</InputLabel>
             <Button variant="contained" component="label" startIcon={<CloudUploadIcon />}>
-              Upload
-              <input type="file" name="poster" hidden onChange={handleFileChange} accept="image/*" />
+              Upload Backdrop
+              <input type="file" name="backdrop" hidden onChange={handleFileChange} accept="image/*" />
             </Button>
           </FormControl>
 
@@ -102,7 +112,7 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
 
           <FormControl fullWidth margin="normal">
             <InputLabel>Adult</InputLabel>
-            <Select name="adult" value={newMovie.adult} onChange={handleInputChange}>
+            <Select name="adult" value={newMovie.adult} onChange={(e) => setNewMovie((prev) => ({ ...prev, adult: e.target.value }))}>
               <MenuItem value={true}>Yes</MenuItem>
               <MenuItem value={false}>No</MenuItem>
             </Select>
@@ -110,7 +120,7 @@ const AddMovieModal = ({ open, handleClose, fetchMovies }) => {
 
           <FormControl fullWidth margin="normal">
             <InputLabel>Video</InputLabel>
-            <Select name="video" value={newMovie.video} onChange={handleInputChange}>
+            <Select name="video" value={newMovie.video} onChange={(e) => setNewMovie((prev) => ({ ...prev, video: e.target.value }))}>
               <MenuItem value={true}>Yes</MenuItem>
               <MenuItem value={false}>No</MenuItem>
             </Select>
