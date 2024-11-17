@@ -20,6 +20,8 @@ import AdminRoute from './components/AdminRoute'; // Pastikan import AdminRoute
 import UserTable from './components/AdminPage/UserTable'
 import CastTable from './components/AdminPage/Cast/CastTable';
 import {initStarscape} from './starscapeAnimation';
+import AddMovie from './components/AdminPage/Movie/AddMoviePage';
+import EditMovie from './components/AdminPage/Movie/EditMoviePage';
 import { useEffect } from 'react';
 
 function App() {
@@ -58,6 +60,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/cat/recent-movies" element={<RecentMovie />} />
           <Route path="/cat/popular-movies" element={<PopularMovie />} />
+          <Route path="/add-movie" element={<AddMovie />} />
 
           {/* Parent Route Admin yang Dilindungi */}
           <Route path="/admin" element={<AdminRoute />}>
@@ -66,6 +69,7 @@ function App() {
             <Route path="movie" element={<MovieTable />} />
             <Route path="user" element={<UserTable />} />
             <Route path="cast" element={<CastTable/>} />
+            <Route path="edit-movie/:id" element={<EditMovie />} />
           </Route>
         </Routes>
         </div>

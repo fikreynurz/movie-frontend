@@ -4,8 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import logo from '../../assets/images/logo.png';
 import FilterModal from '../Filter/FilterModal';
-import AddMovieModal from '../AdminPage/Movie/AddMovieModal'; // Import AddMovieModal
 import api from '../Api';
+
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -14,7 +14,6 @@ const Header = () => {
   const [profilePic, setProfilePic] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  const [openAddMovieModal, setOpenAddMovieModal] = useState(false); // Modal state for Add Movie
 
   const navigate = useNavigate();
   const user = localStorage.getItem("user");
@@ -35,7 +34,6 @@ const Header = () => {
   }, [user]);
 
   const fetchMovies = async () => {
-    // fetch all movies (make sure API is accessible)
     try {
       const response = await api.get("/movies");
       console.log("Movies fetched: ", response.data);
@@ -59,35 +57,37 @@ const Header = () => {
           JAKRIE
         </Typography>
 
+        {/* Tampilkan tombol hanya jika role adalah user */}
         {isLoggedIn && role === 'user' && (
           <>
-            {role !== 'admin' && (
-              <Autocomplete
-                freeSolo
-                options={suggestions.map((option) => option.title ? option.title : option.name)}
-                onInputChange={(event, value) => setSearchQuery(value)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Search Movies or Actors"
-                    size="small"
-                    color="inherit"
-                    onKeyDown={(e) => e.key === 'Enter' && navigate('/search', { state: { query: searchQuery } })}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                )}
-              />
-            )}
-            <Button color="inherit" onClick={() => setOpenAddMovieModal(true)}>
+            <Autocomplete
+              freeSolo
+              options={suggestions.map((option) => option.title ? option.title : option.name)}
+              onInputChange={(event, value) => setSearchQuery(value)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Search Movies or Actors"
+                  size="small"
+                  color="inherit"
+                  onKeyDown={(e) => e.key === 'Enter' && navigate('/search', { state: { query: searchQuery } })}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
+            <Button color="inherit" onClick={() => navigate('/add-movie')}>
               Add Movie
             </Button>
             <FilterModal />
+            <Button color="inherit" onClick={() => navigate('/profile')}>
+              Profile
+            </Button>
           </>
         )}
 
@@ -96,9 +96,6 @@ const Header = () => {
             <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} color="inherit">
               <Avatar src={profilePic} alt="Profile" />
             </IconButton>
-            <Button color="inherit" onClick={() => navigate('/profile')}>
-              Profile
-            </Button>
             <Menu
               anchorEl={anchorEl}
               keepMounted
@@ -114,9 +111,6 @@ const Header = () => {
           <Button color="inherit" onClick={() => navigate('/login')}>Login</Button>
         )}
       </Toolbar>
-
-      {/* AddMovieModal is called here */}
-      <AddMovieModal open={openAddMovieModal} handleClose={() => setOpenAddMovieModal(false)} fetchMovies={fetchMovies}/>
     </AppBar>
   );
 };
