@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { 
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, 
   IconButton, Dialog, DialogActions, DialogContent, DialogContentText, 
-  DialogTitle, TextField, Select, MenuItem, FormControl, InputLabel, Box, Typography
+  DialogTitle, TextField, Select, MenuItem, FormControl, InputLabel, Box, Typography 
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
-//import axios from 'axios';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 import AdminSidebar from './AdminSidebar';
 import { Button } from '@mui/material';
 import api from '../Api';
+
+const MySwal = withReactContent(Swal);
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -38,10 +41,24 @@ const UserTable = () => {
 
   const handleDelete = async (id) => {
     try {
-      await api.delete(`/users/${id}`);
-      fetchUsers(); // Refresh user list after deletion
+      const result = await MySwal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      });
+
+      if (result.isConfirmed) {
+        await api.delete(`/users/${id}`);
+        fetchUsers(); // Refresh user list after deletion
+        MySwal.fire('Deleted!', 'User has been deleted.', 'success');
+      }
     } catch (error) {
       console.error("Error deleting user:", error);
+      MySwal.fire('Error!', 'Failed to delete user.', 'error');
     }
   };
 
@@ -58,17 +75,33 @@ const UserTable = () => {
 
   const handleSubmit = async () => {
     try {
-      if (editMode) {
-        // Update user
-        await api.put(`/users/${currentUser._id}`, currentUser);
-      } else {
-        // Add new user
-        await api.post('/users/register', currentUser);
+      const result = await MySwal.fire({
+        title: editMode ? 'Update User?' : 'Add User?',
+        text: editMode 
+          ? 'Are you sure you want to update this user?' 
+          : 'Are you sure you want to add this user?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: editMode ? 'Yes, update it!' : 'Yes, add it!',
+      });
+
+      if (result.isConfirmed) {
+        if (editMode) {
+          // Update user
+          await api.put(`/users/${currentUser._id}`, currentUser);
+        } else {
+          // Add new user
+          await api.post('/users/register', currentUser);
+        }
+        fetchUsers(); // Refresh user list after submission
+        handleClose();
+        MySwal.fire('Success!', 'User saved successfully.', 'success');
       }
-      fetchUsers(); // Refresh user list after submission
-      handleClose();
     } catch (error) {
       console.error("Error saving user:", error);
+      MySwal.fire('Error!', 'Failed to save user.', 'error');
     }
   };
 
