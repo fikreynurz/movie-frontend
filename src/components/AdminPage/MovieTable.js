@@ -70,21 +70,35 @@ const MovieTable = () => {
     navigate(`/admin/edit-movie/${movieId}`);
   };
 
-  const displayedMovies = movies
-    .filter((movie) => {
-      if (statusFilter === "Approved") {
-        return movie.isApproved === true;
-      } else if (statusFilter === "Unapproved") {
-        return movie.isApproved === false;
-      }
-      return true; // Jika tidak ada filter, tampilkan semua
-    })  
+  const filteredMovies = movies.filter((movie) => {
+    if (statusFilter === "Approved") return movie.isApproved === true || movie.isApproved === "Approved";
+    if (statusFilter === "Unapproved") return movie.isApproved === false || movie.isApproved === "Unapproved";
+    return true;
+  });
 
-    .filter((movie) => {
-      // Filter berdasarkan search query pada judul
-      return movie.title.toLowerCase().includes(searchQuery.toLowerCase());
-    })
-    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const displayedMovies = movies
+  .filter((movie) => {
+    if (statusFilter === "Approved") {
+      return movie.isApproved === "Approved"; // String comparison
+    } else if (statusFilter === "Unapproved") {
+      return movie.isApproved === "Unapproved"; // String comparison
+    }
+    return true; // Jika tidak ada filter, tampilkan semua
+  })
+  .filter((movie) => {
+    // Filter berdasarkan search query pada judul
+    return movie.title.toLowerCase().includes(searchQuery.toLowerCase());
+  })
+  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+  useEffect(() => {
+    if (page > Math.ceil(filteredMovies.length / rowsPerPage) - 1) {
+      setPage(0); // Reset ke halaman pertama jika data berkurang
+    }
+  }, [filteredMovies, rowsPerPage, page]);
+  
+  console.log("Displayed Movies:", displayedMovies); // Debugging
+  console.log("Filtered Movies:", filteredMovies.length); // Debugging
 
     return (
       <>
@@ -178,7 +192,7 @@ const MovieTable = () => {
                   </TableCell>
   
                   <TableCell>
-                    {movie.isApproved ? (
+                    {movie.isApproved === true || movie.isApproved === "Approved" ? (
                       <Typography color="green">
                         <strong>Approved</strong>
                       </Typography>
@@ -204,7 +218,7 @@ const MovieTable = () => {
           <TablePagination
             rowsPerPageOptions={[]}
             component="div"
-            count={movies.length}
+            count={filteredMovies.length} // Menggunakan total data yang sudah difilter
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

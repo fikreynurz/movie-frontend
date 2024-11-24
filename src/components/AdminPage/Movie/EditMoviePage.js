@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../Api';
+import Swal from 'sweetalert2';
 
 const EditMoviePage = () => {
   const { id: movieId } = useParams();
@@ -104,15 +105,26 @@ const EditMoviePage = () => {
     try {
       await api.put(`/movies/${movieId}`, movieData);
       setLoading(false);
-      setSnackbarMessage('Movie successfully updated!');
-      setSnackbarSeverity('success');
-      setSnackbarOpen(true);
-      navigate('/admin/movie');
+  
+      // SweetAlert untuk keberhasilan
+      Swal.fire({
+        title: 'Success!',
+        text: 'Movie successfully updated!',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      }).then(() => {
+        navigate('/admin/movie'); // Arahkan ke halaman movie admin setelah notifikasi ditutup
+      });
     } catch (error) {
       setLoading(false);
-      setSnackbarMessage('Failed to update movie. Please try again.');
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
+  
+      // SweetAlert untuk kegagalan
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to update movie. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
       console.error('Error updating movie:', error);
     }
   };
@@ -285,22 +297,28 @@ const EditMoviePage = () => {
           </Box>
 
                 {/* Modal Konfirmasi */}
-        <Dialog open={openModal} onClose={() => setOpenModal(false)}>
-          <DialogTitle>Confirm Update</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Are you sure you want to update this movie?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setOpenModal(false)} color="secondary">
-              No
-            </Button>
-            <Button onClick={handleSave} color="primary">
-              Yes
-            </Button>
-          </DialogActions>
-        </Dialog>
+                <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+                  <DialogTitle>Confirm Update</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      Are you sure you want to update this movie?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={() => setOpenModal(false)} color="secondary">
+                      No
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setOpenModal(false); // Tutup modal sebelum menyimpan
+                        handleSave(); // Panggil fungsi untuk menyimpan perubahan
+                      }}
+                      color="primary"
+                    >
+                      Yes
+                    </Button>
+                  </DialogActions>
+                </Dialog>
         </>
       )}
 

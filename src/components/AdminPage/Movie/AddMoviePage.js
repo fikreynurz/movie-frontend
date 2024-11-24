@@ -23,6 +23,7 @@ import {
 import api from '../../Api';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const AddMovieForm = () => {
   const [newMovie, setNewMovie] = useState({
@@ -120,35 +121,48 @@ const AddMovieForm = () => {
     const formData = new FormData();
     const user = JSON.parse(localStorage.getItem('user'));
     const userRole = user?.role || 'user';
-
+  
     Object.keys(newMovie).forEach((key) => {
       if (key === 'poster' || key === 'backdrop') {
         formData.append(key, newMovie[key]);
       } else if (key === 'popularity' || key === 'vote_average' || key === 'vote_count') {
         formData.append(key, newMovie[key]);
-      } else {
+      } else if (typeof newMovie[key] === 'object') {
         formData.append(key, JSON.stringify(newMovie[key]));
+      } else {
+        formData.append(key, newMovie[key]);
       }
-    });
-
+    });    
+  
     formData.append('isApproved', userRole === 'admin');
-
+  
     try {
       await api.post('/movies', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setLoading(false);
       setOpenModal(false); // Tutup modal setelah berhasil
-      setSnackbarMessage('Movie berhasil ditambahkan!');
-      setSnackbarSeverity('success');
-      setSnackbarOpen(true); // Tampilkan Snackbar
-      navigate(-1); // Kembali ke halaman sebelumnya
+  
+      // Tampilkan SweetAlert berhasil
+      Swal.fire({
+        title: 'Success!',
+        text: 'Movie berhasil ditambahkan!',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      }).then(() => {
+        navigate(-1); // Kembali ke halaman sebelumnya setelah notifikasi ditutup
+      });
     } catch (error) {
       setLoading(false);
       setOpenModal(false); // Tutup modal jika ada error
-      setSnackbarMessage('Gagal menambahkan movie. Silakan coba lagi.');
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true); // Tampilkan Snackbar
+  
+      // Tampilkan SweetAlert gagal
+      Swal.fire({
+        title: 'Error!',
+        text: 'Gagal menambahkan movie. Silakan coba lagi.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
       console.error('Error adding movie:', error);
     }
   };
@@ -157,7 +171,6 @@ const AddMovieForm = () => {
     setSnackbarOpen(false); // Tutup Snackbar
   };
     
-
   return (
     <>
     {/* Button "Back" di luar Container */}
@@ -180,7 +193,7 @@ const AddMovieForm = () => {
       <Card sx={{ mb: 3 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            Movie Details
+            Movie Detailsn
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <Grid container spacing={2}>

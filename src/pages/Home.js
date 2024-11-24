@@ -1,28 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Box, Typography, CircularProgress, Button } from '@mui/material';
+import { Container, Box, Typography, CircularProgress, Button, Grid } from '@mui/material';
 import Movie from '../components/Movie/Movie';
 import RecentCarousel from '../components/Carousel/Carousel';
-//import axios from 'axios';
-import { Link } from 'react-router-dom';  // Tambahkan Link dari react-router-dom
-import api
- from '../components/Api';
+import { Link } from 'react-router-dom';
+import api from '../components/Api';
+
 const Home = () => {
   const [popularMovies, setPopularMovies] = useState([]);
   const [recentMovies, setRecentMovies] = useState([]);
-  const [loadingPopular, setLoadingPopular] = useState(true);  // Loading state untuk popular movies
-  const [loadingRecent, setLoadingRecent] = useState(true);    // Loading state untuk recent movies
+  const [loadingPopular, setLoadingPopular] = useState(true);
+  const [loadingRecent, setLoadingRecent] = useState(true);
 
-  // Fetch Popular and Recent movies dari API TMDB
   useEffect(() => {
     const fetchPopularMovies = async () => {
-      setLoadingPopular(true);  // Set loading to true when fetching starts
+      setLoadingPopular(true);
       try {
         const response = await api.get("/movies/popular?page=1&limit=5");
-        setPopularMovies(response.data.results);  // Set the limited results
+        setPopularMovies(response.data.results);
       } catch (error) {
         console.error("Error fetching popular movies:", error);
       } finally {
-        setLoadingPopular(false);  // Set loading to false after data is fetched
+        setLoadingPopular(false);
       }
     };
 
@@ -45,6 +43,7 @@ const Home = () => {
   return (
     <>
       <Container maxWidth="lg">
+        {/* Carousel */}
         <Box my={4}>
           <RecentCarousel />
         </Box>
@@ -56,17 +55,18 @@ const Home = () => {
           </Typography>
 
           {loadingPopular ? (
-            <Box display="flex" justifyContent="center" alignItems="center">
+            <Box display="flex" justifyContent="center" alignItems="center" height="200px">
               <CircularProgress />
             </Box>
           ) : (
             <>
-              <Box sx={{ display: 'flex', gap: 2 }}>
+              <Grid container spacing={2}>
                 {popularMovies.map((movie) => (
-                  <Movie key={movie.id} movies={[movie]} />
+                  <Grid item xs={12} sm={6} md={4} lg={2.4} key={movie.id}>
+                    <Movie movies={[movie]} />
+                  </Grid>
                 ))}
-              </Box>
-              {/* Tombol "View More" untuk Popular Movies */}
+              </Grid>
               <Box display="flex" justifyContent="flex-end" mt={2}>
                 <Button component={Link} to="cat/popular-movies" variant="contained" color="primary">
                   View More
@@ -83,17 +83,18 @@ const Home = () => {
           </Typography>
 
           {loadingRecent ? (
-            <Box display="flex" justifyContent="center" alignItems="center">
+            <Box display="flex" justifyContent="center" alignItems="center" height="200px">
               <CircularProgress />
             </Box>
           ) : (
             <>
-              <Box sx={{ display: 'flex', gap: 2 }}>
+              <Grid container spacing={2}>
                 {recentMovies.map((movie) => (
-                  <Movie key={movie.id} movies={[movie]} />
+                  <Grid item xs={12} sm={6} md={4} lg={2.4} key={movie.id}>
+                    <Movie movies={[movie]} />
+                  </Grid>
                 ))}
-              </Box>
-              {/* Tombol "View More" untuk Recent Movies */}
+              </Grid>
               <Box display="flex" justifyContent="flex-end" mt={2}>
                 <Button component={Link} to="cat/recent-movies" variant="contained" color="primary">
                   View More
