@@ -157,6 +157,7 @@ const UserTable = () => {
                   <IconButton
                     color="secondary"
                     onClick={() => handleDelete(user._id)}
+                    data-testid="delete-button"
                   >
                     <Delete />
                   </IconButton>
@@ -195,12 +196,14 @@ const UserTable = () => {
             onChange={handleChange}
           />
           <FormControl fullWidth margin="dense">
-            <InputLabel>Role</InputLabel>
+            <InputLabel id="role-label">Role</InputLabel>
             <Select
               name="role"
               value={currentUser.role}
               onChange={handleChange}
+              labelId="role-label"
               label="Role"
+              data-testid="role-select"
             >
               <MenuItem value="user">User</MenuItem>
               <MenuItem value="admin">Admin</MenuItem>

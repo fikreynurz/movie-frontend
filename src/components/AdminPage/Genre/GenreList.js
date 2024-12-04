@@ -18,6 +18,7 @@ import {
 import { Visibility as VisibilityIcon } from "@mui/icons-material";
 import AdminSidebar from "../AdminSidebar";
 import api from "../../Api";
+import Swal from "sweetalert2";
 
 const GenreList = () => {
   const [genres, setGenres] = useState([]);
@@ -26,6 +27,7 @@ const GenreList = () => {
   const [adminName, setAdminName] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [newGenre, setNewGenre] = useState("");
+  const [newGenreError, setNewGenreError] = useState("");
 
   const fetchGenres = async () => {
     try {
@@ -60,20 +62,42 @@ const GenreList = () => {
   );
 
   const handleOpenModal = () => setOpenModal(true);
+
   const handleCloseModal = () => setOpenModal(false);
 
   const handleAddGenre = async () => {
+    console.log("Current Genre:", newGenre);
+    console.log("Existing Genres:", genres);
+  
+    if (!newGenre.trim()) {
+      setNewGenreError("Genre name is required");
+      return;
+    }
+  
+    if (genres.some((genre) => genre.name.toLowerCase() === newGenre.toLowerCase())) {
+      setNewGenreError("Genre name already exists");
+      return;
+    }
+  
     try {
-      await api.post("/genres", { name: newGenre });
-      fetchGenres();
+      const response = await api.post("/genres", { name: newGenre });
+      setGenres((prevGenres) => [...prevGenres, response.data]);
       handleCloseModal();
       setNewGenre("");
+      setNewGenreError("");
+  
+      // Tambahkan SweetAlert2 untuk notifikasi sukses
+      console.log("SweetAlert will fire!");
+      await Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Genre successfully added!",
+        confirmButtonColor: "#3085d6",
+      });
     } catch (error) {
       console.error("Error adding genre:", error);
     }
-  };
-
-
+  };  
 
   return (
     <>
@@ -143,11 +167,17 @@ const GenreList = () => {
         }}>
           <Typography variant="h6" gutterBottom>Add New Genre</Typography>
           <TextField
+            id="genre-input"
             label="Genre Name"
             variant="outlined"
             fullWidth
             value={newGenre}
-            onChange={(e) => setNewGenre(e.target.value)}
+            onChange={(e) => {
+              setNewGenre(e.target.value);
+              setNewGenreError(""); // Reset error saat input berubah
+            }}
+            error={!!newGenreError} // Jika ada error
+            helperText={newGenreError || ""} // Tampilkan pesan error
             sx={{ mb: 2 }}
           />
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>

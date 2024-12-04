@@ -4,10 +4,10 @@ import Home from '../../pages/Home';
 import api from '../../components/Api';
 import '@testing-library/jest-dom';
 
-jest.mock('../../components/Api', () => ({
-    get: jest.fn().mockImplementation(() => {
-        return Promise.resolve({});
-    })
+jest.mock("../../components/Api", () => ({
+    get: jest.fn().mockResolvedValue({
+        data: { results: [] }, // Simulasi struktur data yang sesuai
+    }),
 }));
 
 jest.mock("../../components/Carousel/Carousel", () => {

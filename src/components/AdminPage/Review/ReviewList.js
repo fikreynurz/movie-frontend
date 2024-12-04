@@ -43,22 +43,31 @@ const ReviewList = () => {
   const [deleteReviewId, setDeleteReviewId] = useState(null);
 
   useEffect(() => {
-    const getReviews = async () => {
+    const fetchReviewsWithTitles = async () => {
       try {
-        const response = await api.get("/reviews");
-        const allReviews = response.data.flatMap((movie) =>
+        const response = await api.get("/reviews"); // Ambil ulasan dari API
+        const reviews = response.data.flatMap((movie) =>
           movie.reviews.map((review) => ({ ...review, movie_id: movie.movie_id }))
         );
-        setReviews(allReviews);
-        setFilteredReviews(allReviews);
-        console.log("Reviews fetched:", allReviews);
+  
+        // Lakukan fetch judul film berdasarkan movie_id
+        const reviewsWithTitles = await Promise.all(
+          reviews.map(async (review) => {
+            const title = await getMovieTitleById(review.movie_id);
+            return { ...review, movie_title: title };
+          })
+        );
+  
+        setReviews(reviewsWithTitles);
+        setFilteredReviews(reviewsWithTitles);
       } catch (error) {
-        console.error("Error fetching reviews:", error);
+        console.error("Error fetching reviews with titles:", error);
       }
     };
-    getReviews();
-  }, []);
-
+  
+    fetchReviewsWithTitles();
+  }, []);  
+  
   useEffect(() => {
     let filtered = reviews;
 
@@ -78,6 +87,16 @@ const ReviewList = () => {
 
     setFilteredReviews(filtered);
   }, [searchQuery, searchFilmId, reviews]);
+
+  const getMovieTitleById = async (movieId) => {
+    try {
+      const response = await api.get(`/movies/${movieId}`); // Ganti dengan endpoint yang sesuai
+      return response.data.title; // Pastikan API mengembalikan `title`
+    } catch (error) {
+      console.error(`Error fetching title for movie ID ${movieId}:`, error);
+      return "Unknown Title"; // Jika gagal, kembalikan default title
+    }
+  };    
 
   const paginatedReviews = filteredReviews.slice(
     page * rowsPerPage,
@@ -187,57 +206,65 @@ const ReviewList = () => {
           }}
         >
           <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#1976d2", color: "#fff" }}>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectAll}
-                    onChange={handleSelectAll}
-                    color="primary"
-                  />
+          <TableHead>
+            <TableRow sx={{ backgroundColor: "#1976d2", color: "#fff" }}>
+              <TableCell padding="checkbox">
+                <Checkbox
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                  color="primary"
+                />
+              </TableCell>
+              <TableCell sx={{ color: "#fff", width: '20%' }}>
+                <strong>Film Title</strong>
+              </TableCell>
+              <TableCell sx={{ color: "#fff", width: '20%' }}>
+                <strong>Author</strong>
+              </TableCell>
+              <TableCell sx={{ color: "#fff", width: '40%' }}>
+                <strong>Content</strong>
+              </TableCell>
+              <TableCell sx={{ color: "#fff", width: '20%', textAlign: "center" }}>
+                <strong>Actions</strong>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredReviews.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  No reviews found
                 </TableCell>
-                <TableCell sx={{ color: "#fff", width: '20%' }}><strong>Film ID</strong></TableCell>
-                <TableCell sx={{ color: "#fff", width: '20%' }}><strong>Author</strong></TableCell>
-                <TableCell sx={{ color: "#fff", width: '40%' }}><strong>Content</strong></TableCell>
-                <TableCell sx={{ color: "#fff", width: '20%', textAlign: "center" }}><strong>Actions</strong></TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredReviews.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} align="center">
-                    No reviews found
+            ) : (
+              filteredReviews.map((review) => (
+                <TableRow key={`${review.movie_id}-${review.id}`} hover>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedReviews.includes(review.id)}
+                      onChange={() => handleSelectReview(review.id)}
+                      color="primary"
+                    />
+                  </TableCell>
+                  <TableCell>{review.movie_title || "Loading..."}</TableCell>
+                  <TableCell>{review.author}</TableCell>
+                  <TableCell>
+                    {review.content.length > 100
+                      ? `${review.content.substring(0, 100)}...`
+                      : review.content}
+                  </TableCell>
+                  <TableCell align="center">
+                    <IconButton color="info" onClick={() => handleViewReview(review.content)}>
+                      <VisibilityIcon />
+                    </IconButton>
+                    <IconButton color="error" onClick={() => openDeleteConfirmModal(review.movie_id, review.id)}>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
-              ) : (
-                filteredReviews.map((review) => (
-                  <TableRow key={`${review.movie_id}-${review.id}`} hover>
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={selectedReviews.includes(review.id)}
-                        onChange={() => handleSelectReview(review.id)}
-                        color="primary"
-                      />
-                    </TableCell>
-                    <TableCell>{review.movie_id}</TableCell>
-                    <TableCell>{review.author}</TableCell>
-                    <TableCell>
-                      {review.content.length > 100
-                        ? `${review.content.substring(0, 100)}...`
-                        : review.content}
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconButton color="info" onClick={() => handleViewReview(review.content)}>
-                        <VisibilityIcon />
-                      </IconButton>
-                      <IconButton color="error" onClick={() => openDeleteConfirmModal(review.movie_id, review.id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
+              ))
+            )}
+          </TableBody>
           </Table>
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
