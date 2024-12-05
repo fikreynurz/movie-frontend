@@ -27,7 +27,7 @@ const RecentCarousel = () => {
           <Carousel.Item key={movie.id}>
             <img
               className="d-block w-100"
-              src={`http://localhost:5000/api/movies/backdrop/${movie.id}`}  
+              src={`https://backend-api.larasbasa.com/api/movies/backdrop/${movie.id}`}  
               alt={movie.title}
               style={{
                 height: '500px',       // Atur tinggi gambar
