@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Buat instance axios dengan konfigurasi default untuk API
 const api = axios.create({
-    baseURL: "http://175.41.160.252:5000/api",  // Sesuaikan dengan URL backend Anda
+    baseURL: "https://backend-api.larasbasa.com/api",  // Sesuaikan dengan URL backend Anda
 });
 
 // Interceptor request untuk menambahkan token ke header Authorization
@@ -38,7 +38,7 @@ api.interceptors.response.use(
 
                 if (refreshToken) {
                     // Meminta token baru menggunakan refresh token
-                    const { data } = await axios.post("http://175.41.160.252:5000/api/users/refresh-token", { refreshToken });
+                    const { data } = await axios.post("https://backend-api.larasbasa.com/api/users/refresh-token", { refreshToken });
                     
                     // Simpan access token baru di localStorage
                     const newAccessToken = data.token;
