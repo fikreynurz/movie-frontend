@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardMedia, CardContent, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
+import api from '../Api';
 
 const Movie = ({ movies }) => {
   if (!movies || movies.length === 0) {
@@ -29,7 +30,7 @@ const Movie = ({ movies }) => {
           >
             <CardMedia
               component="img"
-              image={`http://localhost:5000/api/movies/poster/${movie.id}`}
+              image={`https://backend-api.larasbasa.com/api/movies/poster/${movie.id}`}
               alt={movie.title}
               sx={{ height: 350, objectFit: 'cover', borderRadius: '8px' }}
             />
