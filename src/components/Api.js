@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Buat instance axios dengan konfigurasi default untuk API
 const api = axios.create({
-    baseURL: "http://localhost:5000/api",  // Sesuaikan dengan URL backend Anda
+    baseURL: "http://175.41.160.252/api",  // Sesuaikan dengan URL backend Anda
 });
 
 // Interceptor request untuk menambahkan token ke header Authorization
