@@ -99,37 +99,39 @@ const Header = () => {
               justifyContent: 'center',
             }}
           >
-            <Autocomplete
-              freeSolo
-              options={suggestions.map((option) => option.title || option.name)}
-              onInputChange={(event, value) => setSearchQuery(value)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Search Movies or Actors"
-                  size="small"
-                  sx={{
-                    width: 300,
-                    backgroundColor: 'white',
-                    borderRadius: 1,
-                    color: 'black',
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      navigate('/search', { state: { query: searchQuery } });
-                    }
-                  }}
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              )}
-            />
+          <Autocomplete
+            freeSolo
+            options={suggestions.map((option) => option.title || option.name)}
+            onInputChange={(event, value) => setSearchQuery(value)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search Movies or Actors"
+                size="small"
+                sx={{
+                  width: 300,
+                  backgroundColor: 'white',
+                  borderRadius: 1,
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    navigate('/search', { state: { query: searchQuery } });
+                  }
+                }}
+                InputProps={{
+                  ...params.InputProps,
+                  style: {
+                    color: 'black', // Pastikan warna teks hitam
+                  },
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          />
           </Box>
         )}
 
