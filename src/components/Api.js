@@ -38,7 +38,7 @@ api.interceptors.response.use(
 
                 if (refreshToken) {
                     // Meminta token baru menggunakan refresh token
-                    const { data } = await axios.post("http://localhost:5000/api/users/refresh-token", { refreshToken });
+                    const { data } = await axios.post("http://175.41.160.252:5000/api/users/refresh-token", { refreshToken });
                     
                     // Simpan access token baru di localStorage
                     const newAccessToken = data.token;
