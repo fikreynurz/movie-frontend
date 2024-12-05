@@ -112,6 +112,7 @@ const Header = () => {
                     width: 300,
                     backgroundColor: 'white',
                     borderRadius: 1,
+                    color: 'black',
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {

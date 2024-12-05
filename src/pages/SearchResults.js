@@ -101,7 +101,7 @@ const SearchResults = () => {
                 <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#1c1c1c', color: '#fff', borderRadius: '8px' }}>
                   <CardMedia
                     component="img"
-                    image={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Image'}
+                    image={movie.poster_path ? `https://backend-api.larasbasa.com/api/movies/poster/${movie.id}` : 'https://via.placeholder.com/500x750?text=No+Image'}
                     alt={movie.title}
                     sx={{ height: 350, objectFit: 'cover' }}
                   />
