@@ -49,6 +49,7 @@ const AddMovieForm = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -89,9 +90,51 @@ const AddMovieForm = () => {
     }
   };  
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validasi untuk title
+    if (!newMovie.title.trim()) {
+      newErrors.title = "Title is required.";
+    }
+
+    if (!newMovie.original_title.trim()) {
+      newErrors.original_title = "Original title is required.";
+    }
+
+    // Validasi untuk vote_average
+    if (newMovie.vote_average < 0 || newMovie.vote_average > 10) {
+      newErrors.vote_average = "Vote average must be between 0 and 10.";
+    }
+
+    // Validasi untuk vote_count
+    if (newMovie.vote_count < 0) {
+      newErrors.vote_count = "Vote count cannot be negative.";
+    }
+
+    // Validasi untuk poster
+    if (!newMovie.poster) {
+      newErrors.poster = "Poster is required.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewMovie((prev) => ({ ...prev, [name]: value }));
+    setNewMovie((prev) => {
+      const updatedMovie = { ...prev, [name]: value };
+      
+      // Hitung popularity secara otomatis
+      if (name === "vote_average" || name === "vote_count") {
+        const voteAverage = parseFloat(updatedMovie.vote_average) || 0;
+        const voteCount = parseInt(updatedMovie.vote_count) || 0;
+        updatedMovie.popularity = voteAverage * voteCount; // Popularity dihitung
+      }
+
+      return updatedMovie;
+    });
   };
 
   const handleFileChange = (e) => {
@@ -117,46 +160,44 @@ const AddMovieForm = () => {
   };
 
   const handleAddMovie = async () => {
+    if (!validateForm()) return;
+
     setLoading(true);
     const formData = new FormData();
     const user = JSON.parse(localStorage.getItem('user'));
     const userRole = user?.role || 'user';
-  
+
     Object.keys(newMovie).forEach((key) => {
       if (key === 'poster' || key === 'backdrop') {
-        formData.append(key, newMovie[key]);
-      } else if (key === 'popularity' || key === 'vote_average' || key === 'vote_count') {
         formData.append(key, newMovie[key]);
       } else if (typeof newMovie[key] === 'object') {
         formData.append(key, JSON.stringify(newMovie[key]));
       } else {
         formData.append(key, newMovie[key]);
       }
-    });    
-  
+    });
+
     formData.append('isApproved', userRole === 'admin');
-  
+
     try {
       await api.post('/movies', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setLoading(false);
-      setOpenModal(false); // Tutup modal setelah berhasil
-  
-      // Tampilkan SweetAlert berhasil
+      setOpenModal(false);
+
       Swal.fire({
         title: 'Success!',
         text: 'Movie berhasil ditambahkan!',
         icon: 'success',
         confirmButtonText: 'OK',
       }).then(() => {
-        navigate(-1); // Kembali ke halaman sebelumnya setelah notifikasi ditutup
+        navigate(-1);
       });
     } catch (error) {
       setLoading(false);
-      setOpenModal(false); // Tutup modal jika ada error
-  
-      // Tampilkan SweetAlert gagal
+      setOpenModal(false);
+
       Swal.fire({
         title: 'Error!',
         text: 'Gagal menambahkan movie. Silakan coba lagi.',
@@ -206,6 +247,8 @@ const AddMovieForm = () => {
                 required
                 value={newMovie.title}
                 onChange={handleInputChange}
+                error={!!errors.title}
+                helperText={errors.title}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -216,6 +259,8 @@ const AddMovieForm = () => {
                 fullWidth
                 value={newMovie.original_title}
                 onChange={handleInputChange}
+                error={!!errors.original_title}
+                helperText={errors.original_title}
               />
             </Grid>
             <Grid item xs={12}>
@@ -328,18 +373,6 @@ const AddMovieForm = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Popularity"
-                name="popularity"
-                type="number"
-                variant="outlined"
-                fullWidth
-                value={newMovie.popularity}
-                onChange={handleInputChange}
-                inputProps={{ inputProps: { min: 0 } }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
                 label="Vote Average"
                 name="vote_average"
                 type="number"
@@ -347,7 +380,8 @@ const AddMovieForm = () => {
                 fullWidth
                 value={newMovie.vote_average}
                 onChange={handleInputChange}
-                inputProps={{ inputProps: { min: 0, max: 10 } }}
+                error={!!errors.vote_average}
+                helperText={errors.vote_average}
               />
             </Grid>
             <Grid item xs={12} sm={4}>

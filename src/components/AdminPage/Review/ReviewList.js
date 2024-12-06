@@ -22,6 +22,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import SearchIcon from "@mui/icons-material/Search";
 import api from "../../Api";
 import AdminSidebar from "../AdminSidebar";
+import Swal from "sweetalert2";
 
 const ReviewList = () => {
   const [reviews, setReviews] = useState([]);
@@ -155,19 +156,34 @@ const ReviewList = () => {
     setDeleteReviewId(null);
   };
 
-  // Fungsi untuk menghapus ulasan
   const handleDeleteReview = async () => {
     try {
-      const token = localStorage.getItem("token"); // Ambil token dari localStorage
-      await api.delete(`/reviews/${deleteMovieId}/${deleteReviewId}`, { // gunakan deleteMovieId dan deleteReviewId
-        headers: { Authorization: `Bearer ${token}` }, // Kirim token sebagai bagian dari header
-      });
-      setReviews((prevReviews) => prevReviews.filter((review) => review.id !== deleteReviewId));
-      setFilteredReviews((prevFiltered) => prevFiltered.filter((review) => review.id !== deleteReviewId));
-      handleCloseDeleteConfirmModal(); // Tutup modal konfirmasi setelah menghapus
+        const token = localStorage.getItem("token"); // Ambil token dari localStorage
+        await api.delete(`/reviews/${deleteMovieId}/${deleteReviewId}`, { // gunakan deleteMovieId dan deleteReviewId
+            headers: { Authorization: `Bearer ${token}` }, // Kirim token sebagai bagian dari header
+        });
+        setReviews((prevReviews) => prevReviews.filter((review) => review.id !== deleteReviewId));
+        setFilteredReviews((prevFiltered) => prevFiltered.filter((review) => review.id !== deleteReviewId));
+        handleCloseDeleteConfirmModal(); // Tutup modal konfirmasi setelah menghapus
+
+        // SweetAlert untuk notifikasi berhasil
+        Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: "The review has been successfully deleted.",
+            confirmButtonColor: "#3085d6",
+        });
     } catch (error) {
-      console.error("Error deleting review:", error);
-    }
+        console.error("Error deleting review:", error);
+
+        // SweetAlert untuk notifikasi error
+        Swal.fire({
+            icon: "error",
+            title: "Error!",
+            text: "Failed to delete the review. Please try again.",
+            confirmButtonColor: "#d33",
+        });
+      }
   };
 
   return (
