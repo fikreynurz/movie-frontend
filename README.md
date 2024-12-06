@@ -1,70 +1,140 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+![Awesome ReadME](https://github.com/pottekkat/awesome-readme/raw/master/header.png)
 
-In the project directory, you can run:
+# JAKRIE APP Movie Database
 
-### `npm start`
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/navendu-pottekkat/awesome-readme?include_prereleases)](https://img.shields.io/github/v/release/navendu-pottekkat/awesome-readme?include_prereleases)
+[![GitHub last commit](https://img.shields.io/github/last-commit/navendu-pottekkat/awesome-readme)](https://img.shields.io/github/last-commit/navendu-pottekkat/awesome-readme)
+[![GitHub issues](https://img.shields.io/github/issues-raw/navendu-pottekkat/awesome-readme)](https://img.shields.io/github/issues-raw/navendu-pottekkat/awesome-readme)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/navendu-pottekkat/awesome-readme)](https://img.shields.io/github/issues-pr/navendu-pottekkat/awesome-readme)
+[![GitHub](https://img.shields.io/github/license/navendu-pottekkat/awesome-readme)](https://img.shields.io/github/license/navendu-pottekkat/awesome-readme)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+**JAKRIE APP Movie Database** adalah aplikasi basis data film yang memungkinkan pengguna untuk mencari, menjelajahi, memfilter, dan mengelola data film. Aplikasi ini juga menyediakan dasbor admin untuk mengelola film, pengguna, ulasan, dan genre.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+# Demo Singkat
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+![Demo Preview](https://picsum.photos/1920/1080)
 
-### `npm run build`
+Cobalah aplikasi **JAKRIE APP Movie Database** melalui demo ini. Anda dapat menjelajahi fitur utama seperti pencarian film, dasbor admin, dan autentikasi pengguna.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Daftar Isi
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- [JAKRIE APP Movie Database](#jakrie-app-movie-database)
+- [Demo Singkat](#demo-singkat)
+- [Daftar Isi](#daftar-isi)
+- [Instalasi](#instalasi)
+- [Penggunaan](#penggunaan)
+- [Pengembangan](#pengembangan)
+- [Kontribusi](#kontribusi)
+- [Lisensi](#lisensi)
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# Instalasi
+[(Kembali ke atas)](#daftar-isi)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Untuk menjalankan aplikasi ini secara lokal, ikuti langkah-langkah berikut:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. **Klon Repository**:
+    ```shell
+    git clone <repository-url>
+    cd movie-database
+    ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+2. **Instal Dependensi**:
+    ```shell
+    npm install
+    ```
 
-## Learn More
+3. **Jalankan Server Pengembangan**:
+    ```shell
+    npm start
+    ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+4. **Build untuk Produksi**:
+    ```shell
+    npm run build
+    ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+# Penggunaan
+[(Kembali ke atas)](#daftar-isi)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Berikut adalah langkah-langkah penggunaan aplikasi:
 
-### Analyzing the Bundle Size
+1. Jalankan server pengembangan dengan perintah `npm start`.
+2. Akses aplikasi melalui browser di `http://localhost:3000`.
+3. Login atau daftar untuk mengakses fitur pengguna.
+4. Gunakan dasbor admin (jika diotorisasi) untuk mengelola data film, ulasan, dan lainnya.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+# Pengembangan
+[(Kembali ke atas)](#daftar-isi)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Bagi kontributor atau pengembang, berikut langkah-langkah untuk memulai:
 
-### Advanced Configuration
+1. Kloning proyek:
+    ```shell
+    git clone <repository-url>
+    ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+2. Instal dependensi:
+    ```shell
+    npm install
+    ```
 
-### Deployment
+3. Jalankan proyek dalam mode pengembangan:
+    ```shell
+    npm start
+    ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+4. Jalankan pengujian:
+    ```shell
+    npm test
+    ```
 
-### `npm run build` fails to minify
+Pastikan untuk membaca file `package.json` untuk memahami dependensi proyek lebih lanjut.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+# Kontribusi
+[(Kembali ke atas)](#daftar-isi)
+
+Kami menyambut kontribusi dari komunitas! Ikuti langkah-langkah berikut untuk berkontribusi:
+
+1. **Fork Repository**.
+2. **Buat Branch Fitur Baru**:
+    ```shell
+    git checkout -b feature-name
+    ```
+
+3. **Commit Perubahan**:
+    ```shell
+    git commit -m 'Deskripsi fitur'
+    ```
+
+4. **Push ke Branch Anda**:
+    ```shell
+    git push origin feature-name
+    ```
+
+5. **Buka Pull Request** di repository utama.
+
+---
+
+# Lisensi
+[(Kembali ke atas)](#daftar-isi)
+
+Proyek ini dilisensikan di bawah [Lisensi MIT](./LICENSE).
+
+---
+
+Jika ada hal lain yang ingin Anda tambahkan atau modifikasi, beri tahu saya!
