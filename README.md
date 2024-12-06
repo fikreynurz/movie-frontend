@@ -19,7 +19,7 @@
 
 ![Demo Preview](https://picsum.photos/1920/1080)
 
-Cobalah aplikasi **JAKRIE APP Movie Database** melalui demo ini. Anda dapat menjelajahi fitur utama seperti pencarian film, dasbor admin, dan autentikasi pengguna.
+Lihat aplikasi secara langsung di sini: [Demo JAKRIE APP Movie Database](https://movie-database-jet-three.vercel.app/)
 
 ---
 
