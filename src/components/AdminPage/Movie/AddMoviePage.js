@@ -335,6 +335,7 @@ const AddMovieForm = () => {
                 fullWidth
                 value={newMovie.popularity}
                 onChange={handleInputChange}
+                inputProps={{ inputProps: { min: 0 } }}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -346,6 +347,7 @@ const AddMovieForm = () => {
                 fullWidth
                 value={newMovie.vote_average}
                 onChange={handleInputChange}
+                inputProps={{ inputProps: { min: 0, max: 10 } }}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -357,6 +359,7 @@ const AddMovieForm = () => {
                 fullWidth
                 value={newMovie.vote_count}
                 onChange={handleInputChange}
+                inputProps={{ inputProps: { min: 0 } }}
               />
             </Grid>
           </Grid>
