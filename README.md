@@ -105,31 +105,6 @@ Pastikan untuk membaca file `package.json` untuk memahami dependensi proyek lebi
 
 ---
 
-# Kontribusi
-[(Kembali ke atas)](#daftar-isi)
-
-Kami menyambut kontribusi dari komunitas! Ikuti langkah-langkah berikut untuk berkontribusi:
-
-1. **Fork Repository**.
-2. **Buat Branch Fitur Baru**:
-    ```shell
-    git checkout -b feature-name
-    ```
-
-3. **Commit Perubahan**:
-    ```shell
-    git commit -m 'Deskripsi fitur'
-    ```
-
-4. **Push ke Branch Anda**:
-    ```shell
-    git push origin feature-name
-    ```
-
-5. **Buka Pull Request** di repository utama.
-
----
-
 # Lisensi
 [(Kembali ke atas)](#daftar-isi)
 
